@@ -3,123 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Power Rangers Fighting Game ⚔️</title>
+    <title>Power Rangers Randomizer</title>
     <style>
         body {
-            text-align: center;
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-        }
-        #gameArea {
-            width: 800px;
-            height: 400px;
-            margin: auto;
-            border: 2px solid black;
-            background-color: lightblue;
-            position: relative;
-            overflow: hidden;
-        }
-        .fighter {
-            width: 50px;
-            height: 50px;
-            position: absolute;
-            bottom: 20px;
             text-align: center;
-            font-size: 40px;
+            background-color: #f4f4f4;
+            padding: 50px;
         }
-        #player1 {
-            left: 50px;
-            color: red;
+        h1 {
+            color: #ff0000;
         }
-        #player2 {
-            right: 50px;
-            color: blue;
-        }
-        #healthBars {
-            display: flex;
-            justify-content: space-between;
-            width: 800px;
-            margin: 10px auto;
-        }
-        .health {
-            width: 45%;
-            height: 20px;
-            background-color: green;
-        }
-        #controls {
+        #result {
+            font-size: 20px;
             margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            display: inline-block;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        button {
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #cc0000;
         }
     </style>
 </head>
 <body>
-    <h1>Power Rangers Fighting Game ⚔️</h1>
-    <p>Player 1 (WASD + Space) vs. Player 2 (Arrow Keys + Enter)</p>
 
-    <div id="healthBars">
-        <div id="health1" class="health"></div>
-        <div id="health2" class="health"></div>
-    </div>
-
-    <div id="gameArea">
-        <div id="player1" class="fighter">👊</div>
-        <div id="player2" class="fighter">👊</div>
-    </div>
-
-    <p id="winnerMessage"></p>
-    
-    <button onclick="resetGame()">Restart Game</button>
+    <h1>Power Rangers Random Picker</h1>
+    <p>Click the button to randomly choose a Power Ranger!</p>
+    <button onclick="pickRandom()">Choose a Ranger</button>
+    <div id="result"></div>
 
     <script>
-        let player1 = { element: document.getElementById("player1"), x: 50, health: 100 };
-        let player2 = { element: document.getElementById("player2"), x: 700, health: 100 };
+        const friends = [
+            { name: "Melina", description: "The blonde warrior with bangs, always ready for action!" },
+            { name: "Lia", description: "A curly-haired queen with glasses, bringing wisdom to the team!" },
+            { name: "Hayden", description: "The tall brunette leader, strong and fearless!" },
+            { name: "Maggie", description: "A sunshine-filled blonde, bringing joy and energy!" },
+            { name: "Lorelei", description: "A freckled brunette, always full of surprises!" },
+            { name: "Taylor", description: "The fiery redhead with a fierce attitude!" },
+            { name: "Teigen", description: "The cool blonde dude, ready for any adventure!" },
+            { name: "Kyler", description: "The mixed hero with curly hair, bringing style and skill!" },
+            { name: "Logan", description: "The short but mighty blonde genius with glasses!" }
+        ];
 
-        function updatePositions() {
-            player1.element.style.left = player1.x + "px";
-            player2.element.style.left = player2.x + "px";
-        }
-
-        function updateHealth() {
-            document.getElementById("health1").style.width = player1.health + "%";
-            document.getElementById("health2").style.width = player2.health + "%";
-
-            if (player1.health <= 0) {
-                document.getElementById("winnerMessage").innerText = "Player 2 Wins! 🎉";
-            } else if (player2.health <= 0) {
-                document.getElementById("winnerMessage").innerText = "Player 1 Wins! 🎉";
-            }
-        }
-
-        document.addEventListener("keydown", function(event) {
-            if (player1.health <= 0 || player2.health <= 0) return;
-
-            // Player 1 Controls (WASD + Space to attack)
-            if (event.key === "a" && player1.x > 10) player1.x -= 20;
-            if (event.key === "d" && player1.x < 750) player1.x += 20;
-            if (event.key === " " && Math.abs(player1.x - player2.x) < 60) {
-                player2.health -= 10;
-                updateHealth();
-            }
-
-            // Player 2 Controls (Arrow Keys + Enter to attack)
-            if (event.key === "ArrowLeft" && player2.x > 10) player2.x -= 20;
-            if (event.key === "ArrowRight" && player2.x < 750) player2.x += 20;
-            if (event.key === "Enter" && Math.abs(player2.x - player1.x) < 60) {
-                player1.health -= 10;
-                updateHealth();
-            }
-
-            updatePositions();
-        });
-
-        function resetGame() {
-            player1.x = 50;
-            player1.health = 100;
-            player2.x = 700;
-            player2.health = 100;
-            document.getElementById("winnerMessage").innerText = "";
-            updatePositions();
-            updateHealth();
+        function pickRandom() {
+            const randomIndex = Math.floor(Math.random() * friends.length);
+            const selectedFriend = friends[randomIndex];
+            document.getElementById("result").innerHTML = `<h2>${selectedFriend.name}</h2><p>${selectedFriend.description}</p>`;
         }
     </script>
+
 </body>
 </html>
+
