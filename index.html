@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Power Rangers House Adventure</title>
+    <title>Riley's Red Jeep Adventure</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background-color: #f4f4f4;
+            background-color: #cce7ff;
+            overflow: hidden;
         }
         h1 {
-            color: red;
+            color: #d40000;
         }
         #game-container {
             position: relative;
@@ -19,107 +20,96 @@
             height: 400px;
             border: 2px solid black;
             margin: 20px auto;
-            background: url('https://i.imgur.com/ChV6JRo.png') no-repeat center center / cover;
+            background: url('https://i.imgur.com/9S0S3Nc.png') no-repeat center center / cover; /* Placeholder road */
         }
-        .character {
+        #riley {
+            position: absolute;
             width: 50px;
             height: 50px;
+            bottom: 10px;
+            left: 50px;
+            transition: 0.1s;
+        }
+        #school {
             position: absolute;
-            transition: 0.3s;
+            width: 100px;
+            height: 100px;
+            top: 20px;
+            left: 450px;
         }
-        #character-select {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin: 20px 0;
-        }
-        .char-btn {
-            padding: 10px;
-            cursor: pointer;
-            border: 2px solid black;
-            background: white;
-        }
-        .char-btn:hover {
-            background: lightgray;
-        }
-        .room {
-            width: 600px;
-            height: 400px;
-            position: relative;
+        .boy {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            top: 80px;
             display: none;
+            cursor: pointer;
         }
-        #poop {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            left: 100px;
-            top: 200px;
-        }
-        #vomit {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            left: 300px;
-            top: 150px;
+        #message {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 
-    <h1>Power Rangers House Adventure</h1>
-
-    <p>Choose your character:</p>
-    <div id="character-select">
-        <button class="char-btn" onclick="selectCharacter('melina')">Melina</button>
-        <button class="char-btn" onclick="selectCharacter('lia')">Lia</button>
-        <button class="char-btn" onclick="selectCharacter('hayden')">Hayden</button>
-        <button class="char-btn" onclick="selectCharacter('maggie')">Maggie</button>
-        <button class="char-btn" onclick="selectCharacter('lorelei')">Lorelei</button>
-        <button class="char-btn" onclick="selectCharacter('taylor')">Taylor</button>
-        <button class="char-btn" onclick="selectCharacter('teigen')">Teigen</button>
-        <button class="char-btn" onclick="selectCharacter('kyler')">Kyler</button>
-        <button class="char-btn" onclick="selectCharacter('logan')">Logan</button>
-    </div>
+    <h1>🚗 Riley’s Red Jeep Adventure! 🏫</h1>
+    <p>Drive Riley to Horseheads School, then pick a boy to give a ride home!</p>
 
     <div id="game-container">
-        <img id="character" class="character" src="" style="display:none;">
-        <div id="poop">💩</div>
-        <div id="vomit">🤮</div>
+        <img id="riley" src="https://i.imgur.com/yy8F9N1.png" alt="Riley in Jeep">  <!-- Placeholder Jeep Image -->
+        <img id="school" src="https://i.imgur.com/KvBdBVK.png" alt="Horseheads School"> <!-- Placeholder School Image -->
+        
+        <!-- Different Boys -->
+        <img id="boy1" class="boy" src="https://i.imgur.com/UdZbIUd.png" style="left: 300px;" onclick="pickBoy('Jake')">
+        <img id="boy2" class="boy" src="https://i.imgur.com/UdZbIUd.png" style="left: 350px;" onclick="pickBoy('Ryan')">
+        <img id="boy3" class="boy" src="https://i.imgur.com/UdZbIUd.png" style="left: 400px;" onclick="pickBoy('Ethan')">
     </div>
 
+    <p id="message"></p>
+
     <script>
-        let currentCharacter = "";
+        let riley = document.getElementById("riley");
+        let boys = document.querySelectorAll(".boy");
+        let message = document.getElementById("message");
 
-        function selectCharacter(name) {
-            currentCharacter = name;
-            const characterImg = document.getElementById("character");
-            characterImg.src = `https://placekitten.com/50/50`; // Temporary placeholder
-            characterImg.style.display = "block";
-            characterImg.style.left = "10px";
-            characterImg.style.top = "10px";
-        }
+        let positionX = 50;
+        let positionY = 330;
 
-        document.getElementById("game-container").addEventListener("click", function(event) {
-            if (!currentCharacter) {
-                alert("Pick a character first!");
-                return;
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "ArrowRight" && positionX < 500) {
+                positionX += 10;
+            } else if (event.key === "ArrowLeft" && positionX > 10) {
+                positionX -= 10;
+            } else if (event.key === "ArrowUp" && positionY > 10) {
+                positionY -= 10;
+            } else if (event.key === "ArrowDown" && positionY < 330) {
+                positionY += 10;
             }
-            let character = document.getElementById("character");
-            let x = event.offsetX - 25;
-            let y = event.offsetY - 25;
-            character.style.left = x + "px";
-            character.style.top = y + "px";
+            
+            riley.style.left = positionX + "px";
+            riley.style.top = positionY + "px";
 
-            // Interaction with poop
-            if (x > 90 && x < 120 && y > 190 && y < 220) {
-                alert("Ew! You stepped in poop! 🤢");
-            }
-
-            // Interaction with vomit
-            if (x > 290 && x < 320 && y > 140 && y < 170) {
-                alert("Gross! There's vomit on the floor! 🤮");
+            // If Riley reaches the school
+            if (positionX >= 450 && positionY <= 50) {
+                showBoys();
             }
         });
+
+        function showBoys() {
+            boys.forEach(boy => {
+                boy.style.display = "block";
+            });
+            message.innerText = "Pick a boy to give a ride home!";
+        }
+
+        function pickBoy(name) {
+            message.innerText = `🚗 Riley picked up ${name} and drove him home! 🏠`;
+            boys.forEach(boy => {
+                boy.style.display = "none";
+            });
+        }
     </script>
 
 </body>
