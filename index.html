@@ -3,119 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grade Calculator</title>
+    <title>Flower Truck Business</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            background-color: #fff9f9;
+            color: #333;
+            transition: background-color 0.3s ease;
         }
         .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 400px;
+            width: 80%;
+            margin: auto;
         }
-        h1 {
+        header {
+            background-color: #ffccff;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid #ff66b2;
+        }
+        header h1 {
+            font-size: 2.5em;
+            color: #ff66b2;
+            margin: 0;
+        }
+        section {
+            padding: 20px;
+        }
+        .flowers, .order-form {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+        .flower-item {
+            width: 150px;
+            padding: 10px;
+            margin: 10px;
+            background-color: #f9c2ff;
+            border-radius: 10px;
             text-align: center;
         }
-        label {
-            font-weight: bold;
-        }
-        input[type="number"], input[type="text"] {
+        .flower-item img {
             width: 100%;
-            padding: 8px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            height: auto;
+            border-radius: 8px;
         }
         button {
-            width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
+            padding: 10px 20px;
+            background-color: #ff66b2;
             color: white;
             border: none;
             border-radius: 5px;
-            font-size: 16px;
             cursor: pointer;
         }
         button:hover {
-            background-color: #45a049;
+            background-color: #ff3399;
         }
-        .result {
+        .admin-section {
+            display: none;
+            padding: 20px;
+            background-color: #ffccff;
             margin-top: 20px;
+        }
+        .admin-section input,
+        .admin-section textarea {
+            width: 100%;
             padding: 10px;
-            background-color: #e7f7e7;
+            margin: 10px 0;
             border-radius: 5px;
+            border: 1px solid #ff66b2;
+        }
+        .admin-section button {
+            background-color: #ff3399;
+        }
+        footer {
+            text-align: center;
+            background-color: #ffccff;
+            padding: 10px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Grade & GPA Calculator</h1>
-        <form id="gradeForm">
-            <label for="grades">Enter Grades (separate by commas, e.g., 90, 85, 88, 92):</label>
-            <input type="text" id="grades" placeholder="Enter your grades here" required>
-            <button type="submit">Calculate Average & GPA</button>
-        </form>
+<header>
+    <h1>Flower Truck</h1>
+    <p>Fresh flowers delivered from our truck to you!</p>
+</header>
 
-        <div class="result" id="result" style="display: none;">
-            <p><strong>Average Grade:</strong> <span id="average"></span></p>
-            <p><strong>GPA (4.0 Scale):</strong> <span id="gpa"></span></p>
+<section>
+    <div class="container">
+        <h2>Current Flowers Available</h2>
+        <div class="flowers" id="flowerList">
+            <!-- Flower items will be displayed here dynamically -->
         </div>
     </div>
 
-    <script>
-        document.getElementById('gradeForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+    <div class="container">
+        <h2>Place Your Order</h2>
+        <div class="order-form">
+            <input type="text" id="customerName" placeholder="Your Name" required>
+            <input type="email" id="customerEmail" placeholder="Your Email" required>
+            <textarea id="orderDetails" placeholder="Order Details (e.g., flower choice, quantity)" required></textarea>
+            <button id="placeOrder">Place Order</button>
+        </div>
+    </div>
 
-            // Get grades from the input
-            const gradesInput = document.getElementById('grades').value;
-            const gradesArray = gradesInput.split(',').map(grade => parseFloat(grade.trim()));
+    <!-- Admin Section -->
+    <div class="admin-section" id="adminSection">
+        <h2>Admin Dashboard</h2>
+        <input type="password" id="adminPassword" placeholder="Enter Admin Password" required>
+        <button id="loginAdmin">Login</button>
 
-            // Validate grades
-            if (gradesArray.some(isNaN)) {
-                alert('Please enter valid numeric grades.');
-                return;
-            }
+        <div id="adminControls" style="display:none;">
+            <h3>Edit Current Flowers</h3>
+            <textarea id="flowersList" placeholder="Enter flowers available, separated by commas"></textarea>
+            <button id="updateFlowers">Update Flowers</button>
 
-            // Calculate average
-            const total = gradesArray.reduce((acc, grade) => acc + grade, 0);
-            const average = total / gradesArray.length;
+            <h3>Edit Truck Location & Hours</h3>
+            <input type="text" id="truckLocation" placeholder="Enter Current Location">
+            <input type="text" id="truckHours" placeholder="Enter Hours of Operation">
+            <button id="updateLocationHours">Update Location & Hours</button>
 
-            // Convert average to GPA on a 4.0 scale
-            let gpa = 0;
-            if (average >= 90) {
-                gpa = 4.0;
-            } else if (average >= 85) {
-                gpa = 3.7;
-            } else if (average >= 80) {
-                gpa = 3.3;
-            } else if (average >= 75) {
-                gpa = 3.0;
-            } else if (average >= 70) {
-                gpa = 2.7;
-            } else if (average >= 65) {
-                gpa = 2.3;
-            } else if (average >= 60) {
-                gpa = 2.0;
-            } else {
-                gpa = 1.0; // Below 60 can be considered as 1.0 GPA
-            }
+            <h3>Change Website Color</h3>
+            <input type="color" id="websiteColor">
+            <button id="updateColor">Update Color</button>
 
-            // Show results
-            document.getElementById('average').textContent = average.toFixed(2);
-            document.getElementById('gpa').textContent = gpa.toFixed(2);
-            document.getElementById('result').style.display = 'block';
+            <h3>View Orders</h3>
+            <div id="orderList"></div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p>Flower Truck Business - Bringing you beautiful blooms! &copy; 2025</p>
+</footer>
+
+<script>
+    // Flower data and admin credentials
+    const flowers = ['Roses', 'Tulips', 'Sunflowers', 'Lilies', 'Daisies'];
+    const orders = [];
+    const adminPassword = 'baker';
+
+    // Display flowers to the users
+    const flowerList = document.getElementById('flowerList');
+    flowers.forEach(flower => {
+        const flowerItem = document.createElement('div');
+        flowerItem.classList.add('flower-item');
+        flowerItem.innerHTML = `<img src="https://via.placeholder.com/150" alt="${flower}"><p>${flower}</p>`;
+        flowerList.appendChild(flowerItem);
+    });
+
+    // Place an order
+    document.getElementById('placeOrder').addEventListener('click', function () {
+        const name = document.getElementById('customerName').value;
+        const email = document.getElementById('customerEmail').value;
+        const details = document.getElementById('orderDetails').value;
+
+        if (name && email && details) {
+            const order = { name, email, details };
+            orders.push(order);
+            alert('Your order has been placed!');
+            console.log(orders);
+        } else {
+            alert('Please fill in all fields.');
+        }
+    });
+
+    // Admin login
+    document.getElementById('loginAdmin').addEventListener('click', function () {
+        const password = document.getElementById('adminPassword').value;
+        if (password === adminPassword) {
+            document.getElementById('adminSection').style.display = 'block';
+            document.getElementById('adminPassword').style.display = 'none';
+            document.getElementById('loginAdmin').style.display = 'none';
+        } else {
+            alert('Incorrect password');
+        }
+    });
+
+    // Update flowers
+    document.getElementById('updateFlowers').addEventListener('click', function () {
+        const updatedFlowers = document.getElementById('flowersList').value.split(',');
+        flowers.length = 0;  // Clear the current flowers array
+        flowers.push(...updatedFlowers.map(flower => flower.trim()));
+
+        // Update the flower display for users
+        flowerList.innerHTML = '';
+        flowers.forEach(flower => {
+            const flowerItem = document.createElement('div');
+            flowerItem.classList.add('flower-item');
+            flowerItem.innerHTML = `<img src="https://via.placeholder.com/150" alt="${flower}"><p>${flower}</p>`;
+            flowerList.appendChild(flowerItem);
         });
-    </script>
+
+        alert('Flowers updated!');
+    });
+
+    // Update location and hours
+    document.getElementById('updateLocationHours').addEventListener('click', function () {
+        const location = document.getElementById('truckLocation').value;
+        const hours = document.getElementById('truckHours').value;
+        alert(`Truck location: ${location}, Hours: ${hours}`);
+    });
+
+    // Change website color
+    document.getElementById('updateColor').addEventListener('click', function () {
+        const color = document.getElementById('websiteColor').value;
+        document.body.style.backgroundColor = color;
+    });
+
+    // View Orders
+    function displayOrders() {
+        const orderList = document.getElementById('orderList');
+        orderList.innerHTML = '';
+        orders.forEach(order => {
+            const orderDiv = document.createElement('div');
+            orderDiv.innerHTML = `<p><strong>Name:</strong> ${order.name} <br><strong>Email:</strong> ${order.email} <br><strong>Details:</strong> ${order.details}</p>`;
+            orderList.appendChild(orderDiv);
+        });
+    }
+
+    setInterval(displayOrders, 1000);  // Update orders every second
+</script>
 
 </body>
 </html>
+
