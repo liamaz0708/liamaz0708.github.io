@@ -3,119 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hayden’s Deuce Dash</title>
+    <title>Who's Melina Dating?</title>
     <style>
         body {
             text-align: center;
             font-family: Arial, sans-serif;
         }
         #gameArea {
-            width: 500px;
-            height: 500px;
-            border: 2px solid black;
-            position: relative;
+            width: 600px;
             margin: 20px auto;
-            background-color: lightgreen;
-            overflow: hidden;
+            padding: 20px;
+            border: 2px solid black;
+            background-color: lightyellow;
         }
-        .character, .poop {
-            width: 40px;
-            height: 40px;
-            position: absolute;
+        #melina {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+        .boyfriend {
+            display: inline-block;
+            width: 100px;
+            height: 100px;
             font-size: 30px;
             text-align: center;
+            cursor: pointer;
+            margin: 10px;
+            padding: 10px;
+            border: 2px solid black;
+            background-color: lightblue;
         }
-        .character {
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+        #description {
+            font-size: 18px;
+            margin-top: 20px;
         }
-        .poop {
-            color: brown;
-        }
-        #score {
-            font-size: 20px;
-            margin-top: 10px;
+        #result {
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Hayden’s Deuce Dash 💩</h1>
-    <p>Move with arrow keys and collect as many poops as possible in 30 seconds!</p>
+    <h1>Who's Melina Dating? 💘</h1>
+    <p>Click on a guy to read his personality. Then, guess who Melina's boyfriend is!</p>
+    
     <div id="gameArea">
-        <div id="hayden" class="character">👩‍🦰</div>
-        <div id="player" class="character" style="top: 450px; left: 450px;">🚶‍♂️</div>
+        <div id="melina">👩‍🦳<br>Melina</div>
+        
+        <div class="boyfriend" onclick="showDescription(0)">👨‍🎤</div>
+        <div class="boyfriend" onclick="showDescription(1)">👨‍🏫</div>
+        <div class="boyfriend" onclick="showDescription(2)">👨‍🚀</div>
+        <div class="boyfriend" onclick="showDescription(3)">👨‍💻</div>
+        <div class="boyfriend" onclick="showDescription(4)">👨‍🔧</div>
+
+        <p id="description">Click on a guy to see his description!</p>
+        <button onclick="makeGuess()">Guess</button>
+        <p id="result"></p>
     </div>
-    <p id="score">Deuces: 0</p>
-    <button onclick="startGame()">Start Game</button>
 
     <script>
-        let deuces = 0;
-        let timeLeft = 30;
-        let gameActive = false;
-        let hayden = document.getElementById("hayden");
-        let player = document.getElementById("player");
-        let gameArea = document.getElementById("gameArea");
+        let selectedBoyfriend = null;
+        let correctBoyfriend = Math.floor(Math.random() * 5);
 
-        function moveHayden() {
-            if (!gameActive) return;
+        const descriptions = [
+            "🎸 I'm a musician. I write songs about my exes and wear leather jackets all the time.",
+            "📚 I'm a history teacher. I love classic literature and long discussions about philosophy.",
+            "🚀 I'm an astronaut. I travel to space and think the Earth is cool, but I miss gravity sometimes.",
+            "💻 I'm a software engineer. I drink too much coffee and make websites that nobody understands.",
+            "🔧 I'm a mechanic. I fix cars, ride motorcycles, and have a dog named Rusty."
+        ];
 
-            let maxX = gameArea.clientWidth - 40;
-            let maxY = gameArea.clientHeight - 40;
-            let randomX = Math.floor(Math.random() * maxX);
-            let randomY = Math.floor(Math.random() * maxY);
-
-            hayden.style.left = randomX + "px";
-            hayden.style.top = randomY + "px";
-
-            dropPoop(randomX, randomY);
+        function showDescription(index) {
+            selectedBoyfriend = index;
+            document.getElementById("description").innerText = descriptions[index];
         }
 
-        function dropPoop(x, y) {
-            let poop = document.createElement("div");
-            poop.classList.add("poop");
-            poop.innerHTML = "💩";
-            poop.style.left = x + "px";
-            poop.style.top = y + "px";
-            gameArea.appendChild(poop);
+        function makeGuess() {
+            if (selectedBoyfriend === null) {
+                document.getElementById("result").innerText = "Pick a guy first!";
+                return;
+            }
 
-            poop.addEventListener("click", function() {
-                deuces++;
-                document.getElementById("score").innerText = "Deuces: " + deuces;
-                poop.remove();
-            });
-        }
-
-        document.addEventListener("keydown", function(event) {
-            if (!gameActive) return;
-
-            let playerX = player.offsetLeft;
-            let playerY = player.offsetTop;
-            let step = 20;
-
-            if (event.key === "ArrowUp" && playerY > 0) player.style.top = playerY - step + "px";
-            if (event.key === "ArrowDown" && playerY < gameArea.clientHeight - 40) player.style.top = playerY + step + "px";
-            if (event.key === "ArrowLeft" && playerX > 0) player.style.left = playerX - step + "px";
-            if (event.key === "ArrowRight" && playerX < gameArea.clientWidth - 40) player.style.left = playerX + step + "px";
-        });
-
-        function startGame() {
-            deuces = 0;
-            timeLeft = 30;
-            gameActive = true;
-            document.getElementById("score").innerText = "Deuces: " + deuces;
-
-            let haydenTimer = setInterval(moveHayden, 2000);
-            let gameTimer = setInterval(function() {
-                timeLeft--;
-                if (timeLeft <= 0) {
-                    clearInterval(haydenTimer);
-                    clearInterval(gameTimer);
-                    gameActive = false;
-                    alert("Time's up! Final Deuces: " + deuces);
-                }
-            }, 1000);
+            if (selectedBoyfriend === correctBoyfriend) {
+                document.getElementById("result").innerText = "🎉 Correct! You found Melina's boyfriend!";
+            } else {
+                document.getElementById("result").innerText = "❌ Nope! Try again!";
+            }
         }
     </script>
 </body>
 </html>
+
