@@ -3,144 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teigen vs. Rohan Soccer</title>
+    <title>Melina's Dating Simulator</title>
     <style>
         body {
-            text-align: center;
             font-family: Arial, sans-serif;
-            background-color: #2c3e50;
+            background-color: #f0f8ff;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .button {
+            background-color: #4CAF50;
             color: white;
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
         }
-        canvas {
-            background: green;
-            border: 3px solid white;
+        .button:hover {
+            background-color: #45a049;
         }
-        #score {
-            font-size: 24px;
-            margin-top: 10px;
+        .character {
+            font-weight: bold;
+        }
+        .message {
+            margin: 20px 0;
+            font-size: 18px;
         }
     </style>
 </head>
 <body>
-    <h1>Teigen vs. Rohan Soccer</h1>
-    <p>Teigen (Left) uses <strong>WASD</strong> | Rohan (Right) uses <strong>Arrow Keys</strong></p>
-    <canvas id="gameCanvas" width="800" height="400"></canvas>
-    <p id="score">Teigen: 0 | Rohan: 0</p>
-    <script>
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
 
-        // Game objects
-        let teigen = { x: 50, y: 175, width: 30, height: 30, speed: 5 };
-        let rohan = { x: 720, y: 175, width: 30, height: 30, speed: 5 };
-        let ball = { x: 390, y: 190, radius: 15, dx: 3, dy: 2 };
-        let keys = {};
-        let score = { teigen: 0, rohan: 0 };
+<div class="container">
+    <h1>Melina's Dating Simulator</h1>
+    <p class="message" id="message">Welcome to the dating simulator! Meet the bachelors and decide who you like best.</p>
+    
+    <button class="button" onclick="startGame()">Start Game</button>
+    
+    <div id="choices" style="display: none;">
+        <button class="button" onclick="talkToEthan()">Talk to Ethan</button>
+        <button class="button" onclick="talkToZie()">Talk to Zie</button>
+        <button class="button" onclick="talkToDevin()">Talk to Devin</button>
+        <button class="button" onclick="talkToLogan()">Talk to Logan</button>
+    </div>
+</div>
 
-        // Key event listeners
-        document.addEventListener("keydown", (e) => keys[e.key] = true);
-        document.addEventListener("keyup", (e) => keys[e.key] = false);
+<script>
+    function startGame() {
+        document.getElementById("message").textContent = "You are Melina, and you just arrived at a party full of bachelors. Who do you want to talk to first?";
+        document.getElementById("choices").style.display = "block";
+    }
 
-        function update() {
-            // Teigen movement (WASD)
-            if (keys["w"] && teigen.y > 0) teigen.y -= teigen.speed;
-            if (keys["s"] && teigen.y < canvas.height - teigen.height) teigen.y += teigen.speed;
-            if (keys["a"] && teigen.x > 0) teigen.x -= teigen.speed;
-            if (keys["d"] && teigen.x < canvas.width / 2 - teigen.width) teigen.x += teigen.speed;
+    function talkToEthan() {
+        document.getElementById("message").textContent = "You approach Ethan. He smiles warmly and says, 'Hey Melina! What brings you here?'";
+        updateChoices("Ethan");
+    }
 
-            // Rohan movement (Arrow Keys)
-            if (keys["ArrowUp"] && rohan.y > 0) rohan.y -= rohan.speed;
-            if (keys["ArrowDown"] && rohan.y < canvas.height - rohan.height) rohan.y += rohan.speed;
-            if (keys["ArrowLeft"] && rohan.x > canvas.width / 2) rohan.x -= rohan.speed;
-            if (keys["ArrowRight"] && rohan.x < canvas.width - rohan.width) rohan.x += rohan.speed;
+    function talkToZie() {
+        document.getElementById("message").textContent = "Zie looks at you with a mischievous grin, 'Hey Melina, you're looking great tonight. Care for a dance?'";
+        updateChoices("Zie");
+    }
 
-            // Ball movement
-            ball.x += ball.dx;
-            ball.y += ball.dy;
+    function talkToDevin() {
+        document.getElementById("message").textContent = "Devin stands by the snack table and waves you over, 'Melina, care to try some of these? They're my favorite.'";
+        updateChoices("Devin");
+    }
 
-            // Ball collision with top and bottom
-            if (ball.y <= 0 || ball.y >= canvas.height) ball.dy *= -1;
+    function talkToLogan() {
+        document.getElementById("message").textContent = "Logan seems to be reading a book in the corner, but looks up and says, 'Hi Melina, want to chat for a bit?'";
+        updateChoices("Logan");
+    }
 
-            // Ball collision with players
-            if (ball.x < teigen.x + teigen.width && ball.x + ball.radius > teigen.x &&
-                ball.y < teigen.y + teigen.height && ball.y + ball.radius > teigen.y) {
-                ball.dx *= -1;
-            }
+    function updateChoices(bachelor) {
+        let choices = document.getElementById("choices");
+        let newButtons = '';
 
-            if (ball.x < rohan.x + rohan.width && ball.x + ball.radius > rohan.x &&
-                ball.y < rohan.y + rohan.height && ball.y + ball.radius > rohan.y) {
-                ball.dx *= -1;
-            }
-
-            // Goal detection
-            if (ball.x <= 0) {
-                score.rohan++;
-                resetBall();
-            } else if (ball.x >= canvas.width) {
-                score.teigen++;
-                resetBall();
-            }
-
-            // Update score display
-            document.getElementById("score").textContent = `Teigen: ${score.teigen} | Rohan: ${score.rohan}`;
-
-            // Check for winner
-            if (score.teigen === 3) {
-                alert("Teigen wins!");
-                resetGame();
-            } else if (score.rohan === 3) {
-                alert("Rohan wins!");
-                resetGame();
-            }
+        if (bachelor === "Ethan") {
+            newButtons = `
+                <button class="button" onclick="ethanOption1()">Talk more to Ethan</button>
+                <button class="button" onclick="ethanOption2()">Walk away</button>
+            `;
+        } else if (bachelor === "Zie") {
+            newButtons = `
+                <button class="button" onclick="zieOption1()">Dance with Zie</button>
+                <button class="button" onclick="zieOption2()">Talk about something else</button>
+            `;
+        } else if (bachelor === "Devin") {
+            newButtons = `
+                <button class="button" onclick="devinOption1()">Try the snack</button>
+                <button class="button" onclick="devinOption2()">Leave Devin to enjoy the snack</button>
+            `;
+        } else if (bachelor === "Logan") {
+            newButtons = `
+                <button class="button" onclick="loganOption1()">Sit and chat</button>
+                <button class="button" onclick="loganOption2()">Look around</button>
+            `;
         }
 
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        choices.innerHTML = newButtons;
+    }
 
-            // Draw middle line
-            ctx.fillStyle = "white";
-            ctx.fillRect(canvas.width / 2 - 2, 0, 4, canvas.height);
+    function ethanOption1() {
+        document.getElementById("message").textContent = "You decide to talk more to Ethan. You have a great conversation, and he seems very interested in you!";
+        resetChoices();
+    }
 
-            // Draw goals
-            ctx.fillStyle = "yellow";
-            ctx.fillRect(0, 150, 10, 100);
-            ctx.fillRect(canvas.width - 10, 150, 10, 100);
-
-            // Draw players
-            ctx.fillStyle = "blue";
-            ctx.fillRect(teigen.x, teigen.y, teigen.width, teigen.height);
-
-            ctx.fillStyle = "red";
-            ctx.fillRect(rohan.x, rohan.y, rohan.width, rohan.height);
-
-            // Draw ball
-            ctx.fillStyle = "white";
-            ctx.beginPath();
-            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-            ctx.fill();
-        }
-
-        function resetBall() {
-            ball.x = canvas.width / 2;
-            ball.y = canvas.height / 2;
-            ball.dx = Math.random() > 0.5 ? 3 : -3;
-            ball.dy = Math.random() > 0.5 ? 2 : -2;
-        }
-
-        function resetGame() {
-            score.teigen = 0;
-            score.rohan = 0;
-            resetBall();
-        }
-
-        function gameLoop() {
-            update();
-            draw();
-            requestAnimationFrame(gameLoop);
-        }
-
-        gameLoop();
-    </script>
-</body>
-</html>
-
+    function ethanOption2() {
+        document.getElement
