@@ -3,313 +3,333 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flower Truck Business</title>
+    <meta name="description" content="C&B’s Flower Truck – Bringing fresh flowers to events and markets.">
+    <meta name="keywords" content="flowers, flower truck, events, weddings, fresh flowers">
+    <meta name="author" content="C&B’s Flower Truck">
+    <title>C&B’s Flower Truck</title>
     <style>
         body {
             font-family: 'Georgia', serif;
+            text-align: center;
+            background-color: #f3e5d8;
+            color: #5c3d2e;
             margin: 0;
             padding: 0;
-            background-color: #f7f0e1; /* Soft beige */
-            color: #4e4b3a; /* Earthy brown */
-            transition: background-color 0.3s ease;
-        }
-        header {
-            background-color: #e1d8b9; /* Soft olive green */
-            padding: 40px 20px;
-            text-align: center;
-            border-bottom: 5px solid #d0c8b1;
-            border-radius: 0 0 30px 30px;
-        }
-        header h1 {
-            font-size: 3em;
-            color: #6b5426; /* Earthy brown */
-            margin: 0;
-            font-weight: bold;
-        }
-        header p {
-            font-size: 1.2em;
-            color: #7a6d50; /* Dark beige */
-        }
-        .nav-bar {
-            display: flex;
-            justify-content: flex-end;
-            padding: 10px 20px;
-            background-color: #6b5426; /* Earthy brown */
-        }
-        .nav-bar a {
-            color: white;
-            font-size: 1.2em;
-            text-decoration: none;
-            margin-left: 20px;
-            padding: 10px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-        .nav-bar a:hover {
-            background-color: #9d9a86; /* Lighter olive green */
-        }
-        section {
-            padding: 40px 20px;
+            background-image: url('flower-background.jpg');
+            background-size: cover;
+            background-position: center;
         }
         .container {
             width: 80%;
             margin: auto;
+            padding: 20px;
         }
-        .flowers, .order-form {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        .flower-item {
-            width: 160px;
-            padding: 15px;
-            margin: 10px;
-            background-color: #f0e6d6; /* Light cream */
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .flower-item img {
-            width: 100%;
-            height: auto;
+        .section {
+            display: none;
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
             border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .active {
+            display: block;
         }
         button {
-            padding: 10px 20px;
-            background-color: #7f7c6f; /* Olive green */
+            background: #5c946e;
             color: white;
             border: none;
-            border-radius: 8px;
+            padding: 10px 20px;
             font-size: 16px;
+            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            margin-top: 10px;
         }
-        button:hover {
-            background-color: #9d9a86; /* Lighter olive green */
-        }
-        .order-form input,
-        .order-form textarea {
-            width: 100%;
+        nav {
+            background: #5c946e;
             padding: 10px;
-            margin: 10px 0;
-            border-radius: 8px;
-            border: 1px solid #d0c8b1;
         }
-        .admin-section {
-            display: none;
-            background-color: #e1d8b9; /* Soft olive green */
-            padding: 30px;
-            margin-top: 30px;
-            border-radius: 20px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #5c946e;
+            color: white;
         }
         .admin-section input,
         .admin-section textarea {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
-            border-radius: 8px;
-            border: 1px solid #7f7c6f;
-        }
-        footer {
-            text-align: center;
-            background-color: #f7f0e1; /* Soft beige */
-            padding: 20px;
-            position: fixed;
-            width: 100%;
-            bottom: 0;
-            font-size: 1.2em;
-            color: #7a6d50; /* Dark beige */
-        }
-        .admin-header {
-            font-size: 2em;
-            color: #6b5426; /* Earthy brown */
-            text-align: center;
-        }
-        .admin-header h3 {
-            margin-bottom: 20px;
-        }
-        .login-admin {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .login-admin input {
-            padding: 10px;
-            width: 200px;
-            margin: 10px 0;
-            border-radius: 8px;
-            border: 1px solid #7f7c6f;
-        }
-        .login-admin button {
-            width: 100%;
-            background-color: #7f7c6f;
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        .login-admin button:hover {
-            background-color: #9d9a86;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
-
-<!-- Navigation Bar -->
-<div class="nav-bar">
-    <a href="#">Home</a>
-    <a href="#adminTab" id="adminTab">Admin</a>
-</div>
-
-<header>
-    <h1>Flower Truck</h1>
-    <p>Bringing beautiful blooms wherever we go!</p>
-</header>
-
-<section>
-    <div class="container">
-        <h2>Current Flowers Available</h2>
-        <div class="flowers" id="flowerList">
-            <!-- Flower items will be displayed here dynamically -->
-        </div>
-    </div>
+    <nav>
+        <a onclick="showSection('home')">Home</a>
+        <a onclick="showSection('location')">Live Location</a>
+        <a onclick="showSection('flowers')">Flowers</a>
+        <a onclick="showSection('order')">Order</a>
+        <a onclick="showSection('events')">Future Events</a>
+        <a onclick="showSection('feedback')">Feedback</a>
+        <a onclick="showSection('admin')">Admin</a>
+        <a href="about.html">About</a>
+        <a href="instagram-link" id="instagram-link">Instagram</a>
+    </nav>
 
     <div class="container">
-        <h2>Place Your Order</h2>
-        <div class="order-form">
-            <input type="text" id="customerName" placeholder="Your Name" required>
-            <input type="email" id="customerEmail" placeholder="Your Email" required>
-            <textarea id="orderDetails" placeholder="Order Details (e.g., flower choice, quantity)" required></textarea>
-            <button id="placeOrder">Place Order</button>
+        <!-- Home Section -->
+        <div id="home" class="section active">
+            <h1 id="home-title">Welcome to C&B’s Flower Truck!</h1>
+            <img id="home-image" src="logo.png" alt="C&B’s Flower Truck Logo" width="200">
+            <p id="home-description">C&B’s Travel Florist - Bringing fresh flowers to markets, graduations, weddings, and events! Active from April to October.</p>
+        </div>
+
+        <!-- Order Section (Customer Order Form) -->
+        <div id="order" class="section">
+            <h2>Place Your Order</h2>
+            <form id="order-form">
+                <label for="customer-name">Your Name:</label>
+                <input type="text" id="customer-name" placeholder="Enter your name" required><br>
+                <label for="customer-phone">Phone Number:</label>
+                <input type="text" id="customer-phone" placeholder="Enter your phone number" required><br>
+                <label for="flower-selection">Choose Flower:</label>
+                <select id="flower-selection">
+                    <option value="Rose - $5">Rose - $5</option>
+                    <option value="Tulip - $4">Tulip - $4</option>
+                    <option value="Daisy - $3">Daisy - $3</option>
+                    <!-- Add more options as needed -->
+                </select><br>
+                <button type="submit">Submit Order</button>
+            </form>
+        </div>
+
+        <!-- Admin Section -->
+        <div id="admin" class="section">
+            <h2>Admin Login</h2>
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button onclick="checkLogin()">Login</button>
+           
+            <div id="admin-dashboard" style="display:none;">
+                <h2>Admin Dashboard</h2>
+                
+                <!-- Editable Fields for Admin -->
+                <div class="admin-section">
+                    <h3>Update Flower Inventory</h3>
+                    <table id="inventory-table">
+                        <tr>
+                            <th>Flower Name</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Actions</th>
+                        </tr>
+                        <!-- Dynamic rows will load here -->
+                    </table>
+                    <button onclick="addRow()">Add Flower</button>
+                </div>
+
+                <!-- Business Info Editing -->
+                <div class="admin-section">
+                    <h3>Update Business Info</h3>
+                    <label for="business-location">Location:</label>
+                    <input type="text" id="business-location" placeholder="Enter location">
+                    <label for="business-hours">Operating Hours:</label>
+                    <textarea id="business-hours" placeholder="Enter business hours"></textarea>
+                    <label for="venmo-link">Venmo Link:</label>
+                    <input type="text" id="venmo-link" placeholder="Enter Venmo Link">
+                    <label for="instagram-link-admin">Instagram Link:</label>
+                    <input type="text" id="instagram-link-admin" placeholder="Enter Instagram Link">
+                    <button onclick="saveBusinessInfo()">Save Info</button>
+                </div>
+
+                <!-- Customize Website Colors -->
+                <div class="admin-section">
+                    <h3>Customize Website Colors</h3>
+                    <label for="background-color">Background Color:</label>
+                    <input type="color" id="background-color" onchange="changeBackgroundColor()">
+                    <label for="text-color">Text Color:</label>
+                    <input type="color" id="text-color" onchange="changeTextColor()">
+                </div>
+
+                <!-- Home Page Customization -->
+                <div class="admin-section">
+                    <h3>Edit Home Page</h3>
+                    <label for="home-title-input">Home Title:</label>
+                    <input type="text" id="home-title-input" placeholder="Enter title for Home Page">
+                    <label for="home-description-input">Home Description:</label>
+                    <textarea id="home-description-input" placeholder="Enter description"></textarea>
+                    <label for="home-image-input">Home Image URL:</label>
+                    <input type="text" id="home-image-input" placeholder="Enter image URL">
+                    <button onclick="saveHomePageInfo()">Save Home Page Info</button>
+                </div>
+
+                <!-- View Customer Orders -->
+                <div class="admin-section">
+                    <h3>View Customer Orders</h3>
+                    <table id="orders-table">
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone Number</th>
+                            <th>Flower Ordered</th>
+                        </tr>
+                        <!-- Orders will load dynamically -->
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Admin Section -->
-    <div class="admin-section" id="adminSection">
-        <div class="admin-header">
-            <h3>Admin Dashboard</h3>
-            <p>Welcome, manage your flower truck business</p>
-        </div>
-
-        <!-- Admin Login -->
-        <div class="login-admin" id="loginAdmin">
-            <input type="password" id="adminPassword" placeholder="Enter Admin Password">
-            <button id="loginAdminButton">Login</button>
-        </div>
-
-        <!-- Admin Controls -->
-        <div id="adminControls" style="display:none;">
-            <h3>Edit Current Flowers</h3>
-            <textarea id="flowersList" placeholder="Enter flowers available, separated by commas"></textarea>
-            <button id="updateFlowers">Update Flowers</button>
-
-            <h3>Edit Truck Location & Hours</h3>
-            <input type="text" id="truckLocation" placeholder="Enter Current Location">
-            <input type="text" id="truckHours" placeholder="Enter Hours of Operation">
-            <button id="updateLocationHours">Update Location & Hours</button>
-
-            <h3>Change Website Color</h3>
-            <input type="color" id="websiteColor">
-            <button id="updateColor">Update Color</button>
-
-            <h3>View Orders</h3>
-            <div id="orderList"></div>
-        </div>
-    </div>
-</section>
-
-<footer>
-    <p>Flower Truck Business - Bringing you beautiful blooms! &copy; 2025</p>
-</footer>
-
-<script>
-    // Flower data and admin credentials
-    const flowers = ['Roses', 'Tulips', 'Sunflowers', 'Lilies', 'Daisies'];
-    const orders = [];
-    const adminPassword = 'baker';
-
-    // Display flowers to the users
-    const flowerList = document.getElementById('flowerList');
-    flowers.forEach(flower => {
-        const flowerItem = document.createElement('div');
-        flowerItem.classList.add('flower-item');
-        flowerItem.innerHTML = `<img src="https://via.placeholder.com/150" alt="${flower}"><p>${flower}</p>`;
-        flowerList.appendChild(flowerItem);
-    });
-
-    // Place an order
-    document.getElementById('placeOrder').addEventListener('click', function () {
-        const name = document.getElementById('customerName').value;
-        const email = document.getElementById('customerEmail').value;
-        const details = document.getElementById('orderDetails').value;
-
-        if (name && email && details) {
-            const order = { name, email, details };
-            orders.push(order);
-            alert('Your order has been placed!');
-            console.log(orders);
-        } else {
-            alert('Please fill in all fields.');
+    <script>
+        function showSection(sectionId) {
+            let sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
         }
-    });
 
-    // Admin login
-    document.getElementById('loginAdminButton').addEventListener('click', function () {
-        const password = document.getElementById('adminPassword').value;
-        if (password === adminPassword) {
-            document.getElementById('loginAdmin').style.display = 'none';
-            document.getElementById('adminSection').style.display = 'block';
-            document.getElementById('adminTab').style.display = 'none'; // Hide Admin Tab after login
-        } else {
-            alert('Incorrect password');
+        function checkLogin() {
+            let username = document.getElementById("username").value;
+            let password = document.getElementById("password").value;
+            if (username === "cleo" && password === "baker") {
+                document.getElementById("admin-dashboard").style.display = "block";
+                loadSavedData();
+                loadOrders(); // Load orders after admin login
+            } else {
+                alert("Invalid login!");
+            }
         }
-    });
 
-    // Update flowers
-    document.getElementById('updateFlowers').addEventListener('click', function () {
-        const updatedFlowers = document.getElementById('flowersList').value.split(',');
-        flowers.length = 0;  // Clear the current flowers array
-        flowers.push(...updatedFlowers.map(flower => flower.trim()));
+        // Handle order submission
+        document.getElementById("order-form").addEventListener("submit", function(e) {
+            e.preventDefault();
 
-        // Update the flower display for users
-        flowerList.innerHTML = '';
-        flowers.forEach(flower => {
-            const flowerItem = document.createElement('div');
-            flowerItem.classList.add('flower-item');
-            flowerItem.innerHTML = `<img src="https://via.placeholder.com/150" alt="${flower}"><p>${flower}</p>`;
-            flowerList.appendChild(flowerItem);
+            let name = document.getElementById("customer-name").value;
+            let phone = document.getElementById("customer-phone").value;
+            let flower = document.getElementById("flower-selection").value;
+
+            // Store the order data in localStorage
+            let orders = JSON.parse(localStorage.getItem("orders")) || [];
+            orders.push({ name, phone, flower });
+            localStorage.setItem("orders", JSON.stringify(orders));
+
+            alert("Your order has been submitted!");
+            document.getElementById("order-form").reset();  // Reset the form fields
         });
 
-        alert('Flowers updated!');
-    });
+        // Load saved orders
+        function loadOrders() {
+            let orders = JSON.parse(localStorage.getItem("orders")) || [];
+            let table = document.getElementById("orders-table");
+            orders.forEach(order => {
+                let row = table.insertRow(-1);
+                row.innerHTML = `<td>${order.name}</td>
+                                 <td>${order.phone}</td>
+                                 <td>${order.flower}</td>`;
+            });
+        }
 
-    // Update location and hours
-    document.getElementById('updateLocationHours').addEventListener('click', function () {
-        const location = document.getElementById('truckLocation').value;
-        const hours = document.getElementById('truckHours').value;
-        alert(`Truck location: ${location}, Hours: ${hours}`);
-    });
+        // Admin Functions for Inventory and Business Info
+        function addRow() {
+            let table = document.getElementById("inventory-table");
+            let row = table.insertRow(-1);
+            row.innerHTML = `<td contenteditable="true">New Flower</td>
+                             <td contenteditable="true">0</td>
+                             <td contenteditable="true">$0</td>
+                             <td><button onclick="deleteRow(this)">Delete</button></td>`;
+        }
 
-    // Change website color
-    document.getElementById('updateColor').addEventListener('click', function () {
-        const color = document.getElementById('websiteColor').value;
-        document.body.style.backgroundColor = color;
-    });
+        function deleteRow(button) {
+            let row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+            saveFlowerData(); // Save after deletion
+        }
 
-    // View Orders
-    function displayOrders() {
-        const orderList = document.getElementById('orderList');
-        orderList.innerHTML = '';
-        orders.forEach(order => {
-            const orderDiv = document.createElement('div');
-            orderDiv.innerHTML = `<p><strong>Name:</strong> ${order.name} <br><strong>Email:</strong> ${order.email} <br><strong>Details:</strong> ${order.details}</p>`;
-            orderList.appendChild(orderDiv);
-        });
-    }
+        function saveFlowerData() {
+            let table = document.getElementById("inventory-table");
+            let flowers = [];
+            for (let row of table.rows) {
+                if (row.rowIndex === 0) continue; // Skip header row
+                let flowerName = row.cells[0].innerText;
+                let quantity = row.cells[1].innerText;
+                let price = row.cells[2].innerText;
+                flowers.push({ flowerName, quantity, price });
+            }
+            localStorage.setItem("flowers", JSON.stringify(flowers));
+        }
 
-    setInterval(displayOrders, 1000);  // Update orders every second
-</script>
+        function saveBusinessInfo() {
+            let location = document.getElementById("business-location").value;
+            let hours = document.getElementById("business-hours").value;
+            let venmoLink = document.getElementById("venmo-link").value;
+            let instagramLink = document.getElementById("instagram-link-admin").value;
 
+            let businessInfo = { location, hours, venmoLink, instagramLink };
+            localStorage.setItem("businessInfo", JSON.stringify(businessInfo));
+            alert("Business information saved!");
+        }
+
+        function loadSavedData() {
+            let businessInfo = JSON.parse(localStorage.getItem("businessInfo"));
+            if (businessInfo) {
+                document.getElementById("business-location").value = businessInfo.location;
+                document.getElementById("business-hours").value = businessInfo.hours;
+                document.getElementById("venmo-link").value = businessInfo.venmoLink;
+                document.getElementById("instagram-link-admin").value = businessInfo.instagramLink;
+            }
+
+            let flowers = JSON.parse(localStorage.getItem("flowers"));
+            if (flowers) {
+                let table = document.getElementById("inventory-table");
+                flowers.forEach(flower => {
+                    let row = table.insertRow(-1);
+                    row.innerHTML = `<td contenteditable="true">${flower.flowerName}</td>
+                                     <td contenteditable="true">${flower.quantity}</td>
+                                     <td contenteditable="true">${flower.price}</td>
+                                     <td><button onclick="deleteRow(this)">Delete</button></td>`;
+                });
+            }
+        }
+
+        // Customization Functions
+        function changeBackgroundColor() {
+            let color = document.getElementById("background-color").value;
+            document.body.style.backgroundColor = color;
+        }
+
+        function changeTextColor() {
+            let color = document.getElementById("text-color").value;
+            document.body.style.color = color;
+        }
+
+        function saveHomePageInfo() {
+            let title = document.getElementById("home-title-input").value;
+            let description = document.getElementById("home-description-input").value;
+            let imageUrl = document.getElementById("home-image-input").value;
+
+            document.getElementById("home-title").innerText = title;
+            document.getElementById("home-description").innerText = description;
+            document.getElementById("home-image").src = imageUrl;
+
+            alert("Home page information updated!");
+        }
+    </script>
 </body>
 </html>
+
+
