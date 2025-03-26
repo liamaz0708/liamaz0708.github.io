@@ -3,356 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="C&B’s Flower Truck – Bringing fresh flowers to events and markets.">
-    <meta name="keywords" content="flowers, flower truck, events, weddings, fresh flowers">
-    <meta name="author" content="C&B’s Flower Truck">
-    <title>C&B’s Flower Truck</title>
+    <title>Flower Shop</title>
+    <!-- Link to Bootstrap CSS for better styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            font-family: 'Georgia', serif;
-            text-align: center;
-            background-color: #f3e5d8;
-            color: #5c3d2e;
-            margin: 0;
-            padding: 0;
-            background-image: url('flower-background.jpg');
-            background-size: cover;
-            background-position: center;
+            padding-top: 20px;
         }
-        .container {
-            width: 80%;
-            margin: auto;
+        .navbar {
+            margin-bottom: 20px;
+        }
+        .card-body {
             padding: 20px;
-        }
-        .section {
-            display: none;
-            margin-top: 40px;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .active {
-            display: block;
-        }
-        button {00
-
-
-            background: #5c946e;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        nav {
-            background: #5c946e;
-            padding: 10px;
-        }
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin: 0 15px;
-            font-size: 18px;
-            cursor: pointer;
-        }
-        table {
-            width: 100%;
-            -collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #5c946e;
-            color: white;
-        }
-        .admin-section input,
-        .admin-section textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
         }
     </style>
 </head>
 <body>
-    <nav>
-        <a onclick="showSection('home')">Home</a>
-        <a onclick="showSection('location')">Live Location</a>
-        <a onclick="showSection('flowers')">Flowers</a>
-        <a onclick="showSection('order')">Order</a>
-        <a onclick="showSection('events')">Future Events</a>
-        <a onclick="showSection('feedback')">Feedback</a>
-        <a onclick="showSection('admin')">Admin</a>
-        <a href="about.html">About</a>
-        <a href="instagram-link" id="instagram-link">Instagram</a>
-    </nav>
-   
-    <div class="container">
-        <div id="home" class="section active">
-            <h1 id="home-title">Welcome to C&B’s Flower Truck!</h1>
-            <img id="home-image" src="logo.png" alt="C&B’s Flower Truck Logo" width="200">
-            <p id="home-description">C&B’s Travel Florist - Bringing fresh flowers to markets, graduations, weddings, and events! Active from April to October.</p>
-        </div>
 
-
-        <div id="admin" class="section">
-            <h2>Admin Login</h2>
-            <input type="text" id="username" placeholder="Username">
-            <input type="password" id="password" placeholder="Password">
-            <button onclick="checkLogin()">Login</button>
-           
-            <div id="admin-dashboard" style="display:none;">
-                <h2>Admin Dashboard</h2>
-               
-                <!-- Editable Fields for Admin -->
-                <div class="admin-section">
-                    <h3>Update Flower Inventory</h3>
-                    <table id="inventory-table">
-                        <tr>
-                            <th>Flower Name</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
-                            <th>Actions</th>
-                        </tr>
-                        <!-- Dynamic rows will load here -->
-                    </table>
-                    <button onclick="addRow()">Add Flower</button>
-                </div>
-
-
-                <!-- Location, Hours, etc. -->
-                <div class="admin-section">
-                    <h3>Update Business Info</h3>
-                    <label for="business-location">Location:</label>
-                    <input type="text" id="business-location" placeholder="Enter location">
-                    <label for="business-hours">Operating Hours:</label>
-                    <textarea id="business-hours" placeholder="Enter business hours"></textarea>
-                    <label for="venmo-link">Venmo Link:</label>
-                    <input type="text" id="venmo-link" placeholder="Enter Venmo Link">
-                    <label for="instagram-link-admin">Instagram Link:</label>
-                    <input type="text" id="instagram-link-admin" placeholder="Enter Instagram Link">
-                    <button onclick="saveBusinessInfo()">Save Info</button>
-                </div>
-
-
-                <!-- Change Colors -->
-                <div class="admin-section">
-                    <h3>Customize Website Colors</h3>
-                    <label for="background-color">Background Color:</label>
-                    <input type="color" id="background-color" onchange="changeBackgroundColor()">
-                    <label for="text-color">Text Color:</label>
-                    <input type="color" id="text-color" onchange="changeTextColor()">
-                </div>
-
-
-                <!-- Home Page Customization -->
-                <div class="admin-section">
-                    <h3>Edit Home Page</h3>
-                    <label for="home-title-input">Home Title:</label>
-                    <input type="text" id="home-title-input" placeholder="Enter title for Home Page">
-                    <label for="home-description-input">Home Description:</label>
-                    <textarea id="home-description-input" placeholder="Enter description"></textarea>
-                    <label for="home-image-input">Home Image URL:</label>
-                    <input type="text" id="home-image-input" placeholder="Enter image URL">
-                    <button onclick="saveHomePageInfo()">Save Home Page Info</button>
-                </div>
-            </div>
-        </div>
-
-
-        <div id="flowers" class="section">
-            <h2>Flowers Available</h2>
-            <table id="flowers-table">
-                <tr>
-                    <th>Flower Name</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                </tr>
-                <!-- Dynamic Flower Inventory will load here -->
-            </table>
-        </div>
-
-
-        <div id="location" class="section">
-            <h2>Live Location</h2>
-            <p id="location-info">Loading location...</p>
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Flower Shop</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#flowers">Flowers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#instagram">Instagram</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#admin">Admin</a>
+                </li>
+            </ul>
         </div>
     </div>
-   
-    <script>
-        function showSection(sectionId) {
-            let sections = document.querySelectorAll('.section');
-            sections.forEach(section => section.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
-        }
+</nav>
 
+<!-- Flowers Tab (for users) -->
+<div id="flowers" class="container mt-5">
+    <h2>Our Flowers</h2>
+    <div class="row" id="flowers-list">
+        <!-- Flowers will be populated by JavaScript -->
+    </div>
+</div>
 
-        function checkLogin() {
-            let username = document.getElementById("username").value;
-            let password = document.getElementById("password").value;
-            if (username === "cleo" && password === "baker") {
-                document.getElementById("admin-dashboard").style.display = "block";
-                loadSavedData();
-            } else {
-                alert("Invalid login!");
-            }
-        }
+<!-- Instagram Tab (for users) -->
+<div id="instagram" class="container mt-5">
+    <h2>Our Instagram</h2>
+    <p>Follow us on Instagram: <a id="instagram-link" href="#" target="_blank">Instagram Link</a></p>
+</div>
 
+<!-- Admin Section (for admin users) -->
+<div id="admin" class="container mt-5">
+    <h2>Admin Panel</h2>
 
-        function addRow() {
-            let table = document.getElementById("inventory-table");
-            let row = table.insertRow(-1);
-            row.innerHTML = `<td contenteditable="true">New Flower</td>
-                             <td contenteditable="true">0</td>
-                             <td contenteditable="true">$0</td>
-                             <td><button onclick="deleteRow(this)">Delete</button></td>`;
-        }
+    <!-- Instagram Link Editing -->
+    <div class="card mb-3">
+        <div class="card-header">
+            <h5>Instagram Link</h5>
+        </div>
+        <div class="card-body">
+            <form id="instagram-form">
+                <div class="mb-3">
+                    <label for="instagram_link" class="form-label">Instagram Link</label>
+                    <input type="url" class="form-control" id="instagram_link" name="instagram_link" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+        </div>
+    </div>
 
+    <!-- Flowers Management Section -->
+    <div class="card mb-3">
+        <div class="card-header">
+            <h5>Manage Flowers</h5>
+        </div>
+        <div class="card-body">
+            <form id="add-flower-form">
+                <div class="mb-3">
+                    <label for="flower_name" class="form-label">Flower Name</label>
+                    <input type="text" class="form-control" id="flower_name" name="flower_name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="flower_price" class="form-label">Flower Price</label>
+                    <input type="number" class="form-control" id="flower_price" name="flower_price" required>
+                </div>
+                <div class="mb-3">
+                    <label for="flower_description" class="form-label">Flower Description</label>
+                    <input type="text" class="form-control" id="flower_description" name="flower_description" required>
+                </div>
+                <div class="mb-3">
+                    <label for="flower_image" class="form-label">Flower Image URL</label>
+                    <input type="url" class="form-control" id="flower_image" name="flower_image" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Flower</button>
+            </form>
+        </div>
+    </div>
 
-        function deleteRow(button) {
-            let row = button.parentNode.parentNode;
-            row.parentNode.removeChild(row);
-            saveFlowerData(); // Save after deletion
-        }
+    <!-- Orders Section -->
+    <div class="card mb-3">
+        <div class="card-header">
+            <h5>Orders</h5>
+        </div>
+        <div class="card-body">
+            <ul id="orders-list">
+                <!-- Orders will be populated by JavaScript -->
+            </ul>
+        </div>
+    </div>
+</div>
 
+<!-- Optional: Link to Bootstrap JS for dropdowns, modals, etc. -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 
-        function saveBusinessInfo() {
-            let location = document.getElementById("business-location").value;
-            let hours = document.getElementById("business-hours").value;
-            let venmoLink = document.getElementById("venmo-link").value;
-            let instagramLink = document.getElementById("instagram-link-admin").value;
+<script>
+    // Simulating database with JavaScript objects
+    let flowers = JSON.parse(localStorage.getItem('flowers')) || [];
+    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+    let instagramLink = localStorage.getItem('instagramLink') || 'https://www.instagram.com/yourpage';
 
+    // Function to render flowers to the Flowers section
+    function renderFlowers() {
+        const flowersList = document.getElementById('flowers-list');
+        flowersList.innerHTML = '';
+        flowers.forEach(flower => {
+            const flowerElement = document.createElement('div');
+            flowerElement.classList.add('col-md-4');
+            flowerElement.innerHTML = `
+                <div class="card">
+                    <img src="${flower.image_url}" class="card-img-top" alt="${flower.name}">
+                    <div class="card-body">
+                        <h5 class="card-title">${flower.name}</h5>
+                        <p class="card-text">${flower.description}</p>
+                        <p><strong>Price:</strong> $${flower.price}</p>
+                    </div>
+                </div>
+            `;
+            flowersList.appendChild(flowerElement);
+        });
+    }
 
-            localStorage.setItem("businessLocation", location);
-            localStorage.setItem("businessHours", hours);
-            localStorage.setItem("venmoLink", venmoLink);
-            localStorage.setItem("instagramLink", instagramLink);
+    // Function to update Instagram link in both sections
+    function updateInstagramLink() {
+        const instagramLinkElement = document.getElementById('instagram-link');
+        instagramLinkElement.href = instagramLink;
+        instagramLinkElement.textContent = instagramLink;
+    }
 
+    // Function to render orders in the Admin section
+    function renderOrders() {
+        const ordersList = document.getElementById('orders-list');
+        ordersList.innerHTML = '';
+        orders.forEach(order => {
+            const orderElement = document.createElement('li');
+            orderElement.textContent = `Order ID: ${order.id}, Customer: ${order.customer_name}, Total Price: $${order.total_price}, Status: ${order.status}`;
+            ordersList.appendChild(orderElement);
+        });
+    }
 
-            alert(`Business Info Saved:\nLocation: ${location}\nHours: ${hours}\nVenmo: ${venmoLink}\nInstagram: ${instagramLink}`);
-            updateLocationAndHours();
-            updateLinks();
-        }
+    // Handle Instagram Link form submission
+    document.getElementById('instagram-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        instagramLink = document.getElementById('instagram_link').value;
+        localStorage.setItem('instagramLink', instagramLink);
+        updateInstagramLink();
+    });
 
+    // Handle Flower Addition form submission
+    document.getElementById('add-flower-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const flower = {
+            name: document.getElementById('flower_name').value,
+            price: parseFloat(document.getElementById('flower_price').value),
+            description: document.getElementById('flower_description').value,
+            image_url: document.getElementById('flower_image').value
+        };
+        flowers.push(flower);
+        localStorage.setItem('flowers', JSON.stringify(flowers));
+        renderFlowers();
+    });
 
-        // Save flower inventory to localStorage
-        function saveFlowerData() {
-            let table = document.getElementById("inventory-table");
-            let flowers = [];
-            for (let row of table.rows) {
-                if (row.rowIndex === 0) continue; // Skip header row
-                let flowerName = row.cells[0].innerText;
-                let quantity = row.cells[1].innerText;
-                let price = row.cells[2].innerText;
-                flowers.push({ name: flowerName, quantity: quantity, price: price });
-            }
-            localStorage.setItem("flowerInventory", JSON.stringify(flowers));
-            loadSavedData(); // Update the displayed inventory
-        }
+    // Initial render
+    renderFlowers();
+    renderOrders();
+    updateInstagramLink();
+</script>
 
-
-        // Load saved data (flower inventory, business location, etc.)
-        function loadSavedData() {
-            let flowerInventory = JSON.parse(localStorage.getItem("flowerInventory"));
-            if (flowerInventory) {
-                let table = document.getElementById("inventory-table");
-                table.innerHTML = `<tr><th>Flower Name</th><th>Quantity</th><th>Price</th><th>Actions</th></tr>`; // Reset table
-                flowerInventory.forEach(flower => {
-                    let row = table.insertRow(-1);
-                    row.innerHTML = `<td contenteditable="true">${flower.name}</td>
-                                     <td contenteditable="true">${flower.quantity}</td>
-                                     <td contenteditable="true">${flower.price}</td>
-                                     <td><button onclick="deleteRow(this)">Delete</button></td>`;
-                });
-            }
-            // Update business info in location and hours sections
-            updateLocationAndHours();
-            updateLinks();
-            updateHomePageInfo();
-        }
-
-
-        // Update location and hours displayed
-        function updateLocationAndHours() {
-            let location = localStorage.getItem("businessLocation");
-            let hours = localStorage.getItem("businessHours");
-            document.getElementById("location-info").innerHTML = `Location: <a href="https://www.google.com/maps/search/?q=${encodeURIComponent(location)}" target="_blank">${location || "Not set"}</a><br>Hours: ${hours || "Not set"}`;
-        }
-
-
-        // Update Instagram and Venmo links
-        function updateLinks() {
-            let instagramLink = localStorage.getItem("instagramLink");
-            let venmoLink = localStorage.getItem("venmoLink");
-            document.getElementById("instagram-link").href = instagramLink || "#";
-        }
-
-
-        // Update Home Page Info
-        function updateHomePageInfo() {
-            let title = localStorage.getItem("homeTitle");
-            let description = localStorage.getItem("homeDescription");
-            let image = localStorage.getItem("homeImage");
-            document.getElementById("home-title").innerText = title || "Welcome to C&B’s Flower Truck!";
-            document.getElementById("home-description").innerText = description || "C&B’s Travel Florist - Bringing fresh flowers to markets, graduations, weddings, and events!";
-            document.getElementById("home-image").src = image || "logo.png";
-        }
-
-
-        // Save Home Page Info
-        function saveHomePageInfo() {
-            let title = document.getElementById("home-title-input").value;
-            let description = document.getElementById("home-description-input").value;
-            let image = document.getElementById("home-image-input").value;
-            localStorage.setItem("homeTitle", title);
-            localStorage.setItem("homeDescription", description);
-            localStorage.setItem("homeImage", image);
-            updateHomePageInfo();
-            alert("Home Page Info Saved!");
-        }
-
-
-        // Change Background Color
-        function changeBackgroundColor() {
-            let bgColor = document.getElementById("background-color").value;
-            document.body.style.backgroundColor = bgColor;
-            localStorage.setItem("backgroundColor", bgColor);
-        }
-
-
-        // Change Text Color
-        function changeTextColor() {
-            let textColor = document.getElementById("text-color").value;
-            document.body.style.color = textColor;
-            localStorage.setItem("textColor", textColor);
-        }
-
-
-        // Apply saved styles
-        function applySavedStyles() {
-            let bgColor = localStorage.getItem("backgroundColor");
-            let textColor = localStorage.getItem("textColor");
-            if (bgColor) document.body.style.backgroundColor = bgColor;
-            if (textColor) document.body.style.color = textColor;
-        }
-
-
-        // Run applySavedStyles when the page loads
-        window.onload = applySavedStyles;
-    </script>
 </body>
 </html>
-
-
-
-
-
-
