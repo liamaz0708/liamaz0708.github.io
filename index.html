@@ -3,94 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Who's Melina Dating?</title>
+    <title>Power Rangers Fighting Game ⚔️</title>
     <style>
         body {
             text-align: center;
             font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
         }
         #gameArea {
-            width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            border: 2px solid black;
-            background-color: lightyellow;
-        }
-        #melina {
-            font-size: 40px;
-            margin-bottom: 20px;
-        }
-        .boyfriend {
-            display: inline-block;
-            width: 100px;
-            height: 100px;
-            font-size: 30px;
-            text-align: center;
-            cursor: pointer;
-            margin: 10px;
-            padding: 10px;
+            width: 800px;
+            height: 400px;
+            margin: auto;
             border: 2px solid black;
             background-color: lightblue;
+            position: relative;
+            overflow: hidden;
         }
-        #description {
-            font-size: 18px;
-            margin-top: 20px;
+        .fighter {
+            width: 50px;
+            height: 50px;
+            position: absolute;
+            bottom: 20px;
+            text-align: center;
+            font-size: 40px;
         }
-        #result {
-            font-size: 22px;
-            font-weight: bold;
+        #player1 {
+            left: 50px;
+            color: red;
+        }
+        #player2 {
+            right: 50px;
+            color: blue;
+        }
+        #healthBars {
+            display: flex;
+            justify-content: space-between;
+            width: 800px;
+            margin: 10px auto;
+        }
+        .health {
+            width: 45%;
+            height: 20px;
+            background-color: green;
+        }
+        #controls {
             margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Who's Melina Dating? 💘</h1>
-    <p>Click on a guy to read his personality. Then, guess who Melina's boyfriend is!</p>
-    
-    <div id="gameArea">
-        <div id="melina">👩‍🦳<br>Melina</div>
-        
-        <div class="boyfriend" onclick="showDescription(0)">👨‍🎤</div>
-        <div class="boyfriend" onclick="showDescription(1)">👨‍🏫</div>
-        <div class="boyfriend" onclick="showDescription(2)">👨‍🚀</div>
-        <div class="boyfriend" onclick="showDescription(3)">👨‍💻</div>
-        <div class="boyfriend" onclick="showDescription(4)">👨‍🔧</div>
+    <h1>Power Rangers Fighting Game ⚔️</h1>
+    <p>Player 1 (WASD + Space) vs. Player 2 (Arrow Keys + Enter)</p>
 
-        <p id="description">Click on a guy to see his description!</p>
-        <button onclick="makeGuess()">Guess</button>
-        <p id="result"></p>
+    <div id="healthBars">
+        <div id="health1" class="health"></div>
+        <div id="health2" class="health"></div>
     </div>
 
+    <div id="gameArea">
+        <div id="player1" class="fighter">👊</div>
+        <div id="player2" class="fighter">👊</div>
+    </div>
+
+    <p id="winnerMessage"></p>
+    
+    <button onclick="resetGame()">Restart Game</button>
+
     <script>
-        let selectedBoyfriend = null;
-        let correctBoyfriend = Math.floor(Math.random() * 5);
+        let player1 = { element: document.getElementById("player1"), x: 50, health: 100 };
+        let player2 = { element: document.getElementById("player2"), x: 700, health: 100 };
 
-        const descriptions = [
-            "🎸 I'm a musician. I write songs about my exes and wear leather jackets all the time.",
-            "📚 I'm a history teacher. I love classic literature and long discussions about philosophy.",
-            "🚀 I'm an astronaut. I travel to space and think the Earth is cool, but I miss gravity sometimes.",
-            "💻 I'm a software engineer. I drink too much coffee and make websites that nobody understands.",
-            "🔧 I'm a mechanic. I fix cars, ride motorcycles, and have a dog named Rusty."
-        ];
-
-        function showDescription(index) {
-            selectedBoyfriend = index;
-            document.getElementById("description").innerText = descriptions[index];
+        function updatePositions() {
+            player1.element.style.left = player1.x + "px";
+            player2.element.style.left = player2.x + "px";
         }
 
-        function makeGuess() {
-            if (selectedBoyfriend === null) {
-                document.getElementById("result").innerText = "Pick a guy first!";
-                return;
+        function updateHealth() {
+            document.getElementById("health1").style.width = player1.health + "%";
+            document.getElementById("health2").style.width = player2.health + "%";
+
+            if (player1.health <= 0) {
+                document.getElementById("winnerMessage").innerText = "Player 2 Wins! 🎉";
+            } else if (player2.health <= 0) {
+                document.getElementById("winnerMessage").innerText = "Player 1 Wins! 🎉";
+            }
+        }
+
+        document.addEventListener("keydown", function(event) {
+            if (player1.health <= 0 || player2.health <= 0) return;
+
+            // Player 1 Controls (WASD + Space to attack)
+            if (event.key === "a" && player1.x > 10) player1.x -= 20;
+            if (event.key === "d" && player1.x < 750) player1.x += 20;
+            if (event.key === " " && Math.abs(player1.x - player2.x) < 60) {
+                player2.health -= 10;
+                updateHealth();
             }
 
-            if (selectedBoyfriend === correctBoyfriend) {
-                document.getElementById("result").innerText = "🎉 Correct! You found Melina's boyfriend!";
-            } else {
-                document.getElementById("result").innerText = "❌ Nope! Try again!";
+            // Player 2 Controls (Arrow Keys + Enter to attack)
+            if (event.key === "ArrowLeft" && player2.x > 10) player2.x -= 20;
+            if (event.key === "ArrowRight" && player2.x < 750) player2.x += 20;
+            if (event.key === "Enter" && Math.abs(player2.x - player1.x) < 60) {
+                player1.health -= 10;
+                updateHealth();
             }
+
+            updatePositions();
+        });
+
+        function resetGame() {
+            player1.x = 50;
+            player1.health = 100;
+            player2.x = 700;
+            player2.health = 100;
+            document.getElementById("winnerMessage").innerText = "";
+            updatePositions();
+            updateHealth();
         }
     </script>
 </body>
 </html>
-
