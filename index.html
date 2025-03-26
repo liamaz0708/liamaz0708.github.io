@@ -32,7 +32,7 @@
 </head>
 <body>
     <h1>Dating Connection Map 💕</h1>
-    <p>Add your friends, create stick figure avatars, and connect couples!</p>
+    <p>Create stick figure avatars and connect them!</p>
 
     <div class="controls">
         <input type="text" id="friendName" placeholder="Friend's Name">
@@ -49,6 +49,11 @@
 
     <select id="friend1"></select>
     <select id="friend2"></select>
+    <label>Connection:</label>
+    <select id="connectionType">
+        <option value="dated">They Dated ❤️</option>
+        <option value="talked">They Just Talked 💬</option>
+    </select>
     <button onclick="connectFriends()">Connect</button>
 
     <div id="mapContainer">
@@ -105,6 +110,8 @@
         function connectFriends() {
             const name1 = document.getElementById("friend1").value;
             const name2 = document.getElementById("friend2").value;
+            const connectionType = document.getElementById("connectionType").value;
+
             if (name1 === name2) return alert("A person cannot date themselves!");
 
             const friend1 = friends.find(f => f.name === name1);
@@ -114,7 +121,7 @@
                 return alert("These friends are already connected!");
             }
 
-            connections.push({ a: friend1, b: friend2 });
+            connections.push({ a: friend1, b: friend2, type: connectionType });
             drawScene();
         }
 
@@ -122,9 +129,9 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Draw connections
-            ctx.strokeStyle = "red";
-            ctx.lineWidth = 3;
-            connections.forEach(({ a, b }) => {
+            connections.forEach(({ a, b, type }) => {
+                ctx.strokeStyle = type === "dated" ? "red" : "blue";
+                ctx.lineWidth = type === "dated" ? 4 : 2;
                 ctx.beginPath();
                 ctx.moveTo(a.x + 30, a.y + 40);
                 ctx.lineTo(b.x + 30, b.y + 40);
@@ -143,7 +150,13 @@
             let headSize = 20;
             let bodyHeight = friend.height;
 
+            // Draw name above figure
+            ctx.fillStyle = "black";
+            ctx.font = "12px Arial";
+            ctx.fillText(friend.name, friend.x + 15, friend.y - 5);
+
             // Draw head
+            ctx.fillStyle = "white";
             ctx.beginPath();
             ctx.arc(friend.x + 30, friend.y + 20, headSize / 2, 0, Math.PI * 2);
             ctx.fill();
@@ -211,4 +224,3 @@
     </script>
 </body>
 </html>
-
