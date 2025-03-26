@@ -3,120 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Melina's Dating Simulator</title>
+    <title>Grade Calculator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f8ff;
-            color: #333;
-            text-align: center;
-            padding: 20px;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
         .container {
-            max-width: 600px;
-            margin: 0 auto;
+            background-color: white;
             padding: 20px;
             border-radius: 10px;
-            background-color: #fff;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 400px;
         }
-        .button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            margin: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
+        h1 {
+            text-align: center;
         }
-        .button:hover {
-            background-color: #45a049;
-        }
-        .character {
+        label {
             font-weight: bold;
         }
-        .message {
-            margin: 20px 0;
-            font-size: 18px;
+        input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e7f7e7;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Melina's Dating Simulator</h1>
-    <p class="message" id="message">Welcome to the dating simulator! Meet the bachelors and decide who you like best.</p>
-    
-    <button class="button" onclick="startGame()">Start Game</button>
-    
-    <div id="choices" style="display: none;">
-        <button class="button" onclick="talkToEthan()">Talk to Ethan</button>
-        <button class="button" onclick="talkToZie()">Talk to Zie</button>
-        <button class="button" onclick="talkToDevin()">Talk to Devin</button>
-        <button class="button" onclick="talkToLogan()">Talk to Logan</button>
+    <div class="container">
+        <h1>Grade & GPA Calculator</h1>
+        <form id="gradeForm">
+            <label for="grades">Enter Grades (separate by commas, e.g., 90, 85, 88, 92):</label>
+            <input type="text" id="grades" placeholder="Enter your grades here" required>
+            <button type="submit">Calculate Average & GPA</button>
+        </form>
+
+        <div class="result" id="result" style="display: none;">
+            <p><strong>Average Grade:</strong> <span id="average"></span></p>
+            <p><strong>GPA (4.0 Scale):</strong> <span id="gpa"></span></p>
+        </div>
     </div>
-</div>
 
-<script>
-    function startGame() {
-        document.getElementById("message").textContent = "You are Melina, and you just arrived at a party full of bachelors. Who do you want to talk to first?";
-        document.getElementById("choices").style.display = "block";
-    }
+    <script>
+        document.getElementById('gradeForm').addEventListener('submit', function(event) {
+            event.preventDefault();
 
-    function talkToEthan() {
-        document.getElementById("message").textContent = "You approach Ethan. He smiles warmly and says, 'Hey Melina! What brings you here?'";
-        updateChoices("Ethan");
-    }
+            // Get grades from the input
+            const gradesInput = document.getElementById('grades').value;
+            const gradesArray = gradesInput.split(',').map(grade => parseFloat(grade.trim()));
 
-    function talkToZie() {
-        document.getElementById("message").textContent = "Zie looks at you with a mischievous grin, 'Hey Melina, you're looking great tonight. Care for a dance?'";
-        updateChoices("Zie");
-    }
+            // Validate grades
+            if (gradesArray.some(isNaN)) {
+                alert('Please enter valid numeric grades.');
+                return;
+            }
 
-    function talkToDevin() {
-        document.getElementById("message").textContent = "Devin stands by the snack table and waves you over, 'Melina, care to try some of these? They're my favorite.'";
-        updateChoices("Devin");
-    }
+            // Calculate average
+            const total = gradesArray.reduce((acc, grade) => acc + grade, 0);
+            const average = total / gradesArray.length;
 
-    function talkToLogan() {
-        document.getElementById("message").textContent = "Logan seems to be reading a book in the corner, but looks up and says, 'Hi Melina, want to chat for a bit?'";
-        updateChoices("Logan");
-    }
+            // Convert average to GPA on a 4.0 scale
+            let gpa = 0;
+            if (average >= 90) {
+                gpa = 4.0;
+            } else if (average >= 85) {
+                gpa = 3.7;
+            } else if (average >= 80) {
+                gpa = 3.3;
+            } else if (average >= 75) {
+                gpa = 3.0;
+            } else if (average >= 70) {
+                gpa = 2.7;
+            } else if (average >= 65) {
+                gpa = 2.3;
+            } else if (average >= 60) {
+                gpa = 2.0;
+            } else {
+                gpa = 1.0; // Below 60 can be considered as 1.0 GPA
+            }
 
-    function updateChoices(bachelor) {
-        let choices = document.getElementById("choices");
-        let newButtons = '';
+            // Show results
+            document.getElementById('average').textContent = average.toFixed(2);
+            document.getElementById('gpa').textContent = gpa.toFixed(2);
+            document.getElementById('result').style.display = 'block';
+        });
+    </script>
 
-        if (bachelor === "Ethan") {
-            newButtons = `
-                <button class="button" onclick="ethanOption1()">Talk more to Ethan</button>
-                <button class="button" onclick="ethanOption2()">Walk away</button>
-            `;
-        } else if (bachelor === "Zie") {
-            newButtons = `
-                <button class="button" onclick="zieOption1()">Dance with Zie</button>
-                <button class="button" onclick="zieOption2()">Talk about something else</button>
-            `;
-        } else if (bachelor === "Devin") {
-            newButtons = `
-                <button class="button" onclick="devinOption1()">Try the snack</button>
-                <button class="button" onclick="devinOption2()">Leave Devin to enjoy the snack</button>
-            `;
-        } else if (bachelor === "Logan") {
-            newButtons = `
-                <button class="button" onclick="loganOption1()">Sit and chat</button>
-                <button class="button" onclick="loganOption2()">Look around</button>
-            `;
-        }
-
-        choices.innerHTML = newButtons;
-    }
-
-    function ethanOption1() {
-        document.getElementById("message").textContent = "You decide to talk more to Ethan. You have a great conversation, and he seems very interested in you!";
-        resetChoices();
-    }
-
-    function ethanOption2() {
-        document.getElement
+</body>
+</html>
