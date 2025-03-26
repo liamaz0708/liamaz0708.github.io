@@ -3,68 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Power Rangers Randomizer</title>
+    <title>Power Rangers House Adventure</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             background-color: #f4f4f4;
-            padding: 50px;
         }
         h1 {
-            color: #ff0000;
+            color: red;
         }
-        #result {
-            font-size: 20px;
-            margin-top: 20px;
-            padding: 15px;
-            background: white;
-            border-radius: 10px;
-            display: inline-block;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        #game-container {
+            position: relative;
+            width: 600px;
+            height: 400px;
+            border: 2px solid black;
+            margin: 20px auto;
+            background: url('https://i.imgur.com/ChV6JRo.png') no-repeat center center / cover;
         }
-        button {
-            background-color: #ff0000;
-            color: white;
-            border: none;
-            padding: 15px;
-            font-size: 18px;
+        .character {
+            width: 50px;
+            height: 50px;
+            position: absolute;
+            transition: 0.3s;
+        }
+        #character-select {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .char-btn {
+            padding: 10px;
             cursor: pointer;
-            border-radius: 5px;
+            border: 2px solid black;
+            background: white;
         }
-        button:hover {
-            background-color: #cc0000;
+        .char-btn:hover {
+            background: lightgray;
+        }
+        .room {
+            width: 600px;
+            height: 400px;
+            position: relative;
+            display: none;
+        }
+        #poop {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            left: 100px;
+            top: 200px;
+        }
+        #vomit {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            left: 300px;
+            top: 150px;
         }
     </style>
 </head>
 <body>
 
-    <h1>Power Rangers Random Picker</h1>
-    <p>Click the button to randomly choose a Power Ranger!</p>
-    <button onclick="pickRandom()">Choose a Ranger</button>
-    <div id="result"></div>
+    <h1>Power Rangers House Adventure</h1>
+
+    <p>Choose your character:</p>
+    <div id="character-select">
+        <button class="char-btn" onclick="selectCharacter('melina')">Melina</button>
+        <button class="char-btn" onclick="selectCharacter('lia')">Lia</button>
+        <button class="char-btn" onclick="selectCharacter('hayden')">Hayden</button>
+        <button class="char-btn" onclick="selectCharacter('maggie')">Maggie</button>
+        <button class="char-btn" onclick="selectCharacter('lorelei')">Lorelei</button>
+        <button class="char-btn" onclick="selectCharacter('taylor')">Taylor</button>
+        <button class="char-btn" onclick="selectCharacter('teigen')">Teigen</button>
+        <button class="char-btn" onclick="selectCharacter('kyler')">Kyler</button>
+        <button class="char-btn" onclick="selectCharacter('logan')">Logan</button>
+    </div>
+
+    <div id="game-container">
+        <img id="character" class="character" src="" style="display:none;">
+        <div id="poop">💩</div>
+        <div id="vomit">🤮</div>
+    </div>
 
     <script>
-        const friends = [
-            { name: "Melina", description: "Blonde hair with bangs." },
-            { name: "Lia", description: "Tan skin, curly hair, and glasses." },
-            { name: "Hayden", description: "Tall brunette girl." },
-            { name: "Maggie", description: "Blonde girl." },
-            { name: "Lorelei", description: "Brunette with freckles." },
-            { name: "Taylor", description: "Redhead." },
-            { name: "Teigen", description: "Blond boy." },
-            { name: "Kyler", description: "Mixed boy with curly hair." },
-            { name: "Logan", description: "Short blond boy with glasses." }
-        ];
+        let currentCharacter = "";
 
-        function pickRandom() {
-            const randomIndex = Math.floor(Math.random() * friends.length);
-            const selectedFriend = friends[randomIndex];
-            document.getElementById("result").innerHTML = `<h2>${selectedFriend.name}</h2><p>${selectedFriend.description}</p>`;
+        function selectCharacter(name) {
+            currentCharacter = name;
+            const characterImg = document.getElementById("character");
+            characterImg.src = `https://placekitten.com/50/50`; // Temporary placeholder
+            characterImg.style.display = "block";
+            characterImg.style.left = "10px";
+            characterImg.style.top = "10px";
         }
+
+        document.getElementById("game-container").addEventListener("click", function(event) {
+            if (!currentCharacter) {
+                alert("Pick a character first!");
+                return;
+            }
+            let character = document.getElementById("character");
+            let x = event.offsetX - 25;
+            let y = event.offsetY - 25;
+            character.style.left = x + "px";
+            character.style.top = y + "px";
+
+            // Interaction with poop
+            if (x > 90 && x < 120 && y > 190 && y < 220) {
+                alert("Ew! You stepped in poop! 🤢");
+            }
+
+            // Interaction with vomit
+            if (x > 290 && x < 320 && y > 140 && y < 170) {
+                alert("Gross! There's vomit on the floor! 🤮");
+            }
+        });
     </script>
 
 </body>
 </html>
-
-
