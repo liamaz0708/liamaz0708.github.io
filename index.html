@@ -3,133 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Obstacle Course Game</title>
+    <title>Dating Connection Map 💕</title>
     <style>
         body {
             text-align: center;
             font-family: Arial, sans-serif;
-            background-color: #222;
-            color: white;
+            background-color: #f5e1f7;
+        }
+        #mapContainer {
+            position: relative;
+            width: 90%;
+            height: 500px;
+            border: 2px solid black;
+            background-color: #fff;
+            margin: auto;
+            overflow: hidden;
+        }
+        .friend {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background-color: pink;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 60px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: grab;
         }
         canvas {
-            background: lightblue;
-            border: 3px solid black;
-            display: block;
-            margin: auto;
-        }
-        #gameOver {
-            display: none;
-            font-size: 24px;
-            color: red;
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
-    <h1>Obstacle Course Game 🚀</h1>
-    <p>Use arrow keys to reach the green goal!</p>
-    <canvas id="gameCanvas" width="600" height="400"></canvas>
-    <p id="gameOver">Game Over! Refresh to try again.</p>
+    <h1>Dating Connection Map 💕</h1>
+    <p>Add your friends and connect couples!</p>
+
+    <input type="text" id="friendName" placeholder="Enter a friend's name">
+    <button onclick="addFriend()">Add Friend</button>
+
+    <br><br>
+
+    <select id="friend1"></select>
+    <select id="friend2"></select>
+    <button onclick="connectFriends()">Connect</button>
+
+    <div id="mapContainer">
+        <canvas id="connectionCanvas"></canvas>
+    </div>
+
     <script>
-        const canvas = document.getElementById("gameCanvas");
+        const mapContainer = document.getElementById("mapContainer");
+        const canvas = document.getElementById("connectionCanvas");
         const ctx = canvas.getContext("2d");
+        canvas.width = mapContainer.clientWidth;
+        canvas.height = mapContainer.clientHeight;
 
-        let player = { x: 50, y: 350, width: 20, height: 20, speed: 4 };
-        let goal = { x: 550, y: 50, width: 40, height: 40 };
-        let obstacles = [
-            { x: 200, y: 300, width: 100, height: 20, speed: 2, direction: 1 },
-            { x: 400, y: 200, width: 100, height: 20, speed: 3, direction: -1 }
-        ];
-        let spikes = [
-            { x: 300, y: 380, width: 40, height: 20 },
-            { x: 150, y: 250, width: 40, height: 20 }
-        ];
-        let keys = {};
-        let level = 1;
+        let friends = [];
+        let connections = [];
 
-        // Key event listeners
-        document.addEventListener("keydown", (e) => keys[e.key] = true);
-        document.addEventListener("keyup", (e) => keys[e.key] = false);
+        function addFriend() {
+            const name = document.getElementById("friendName").value.trim();
+            if (!name) return alert("Enter a valid name!");
 
-        function update() {
-            // Move player
-            if (keys["ArrowUp"] && player.y > 0) player.y -= player.speed;
-            if (keys["ArrowDown"] && player.y < canvas.height - player.height) player.y += player.speed;
-            if (keys["ArrowLeft"] && player.x > 0) player.x -= player.speed;
-            if (keys["ArrowRight"] && player.x < canvas.width - player.width) player.x += player.speed;
+            const friend = document.createElement("div");
+            friend.className = "friend";
+            friend.textContent = name;
+            friend.style.left = Math.random() * (mapContainer.clientWidth - 60) + "px";
+            friend.style.top = Math.random() * (mapContainer.clientHeight - 60) + "px";
 
-            // Move obstacles
-            obstacles.forEach(obstacle => {
-                obstacle.x += obstacle.speed * obstacle.direction;
-                if (obstacle.x <= 0 || obstacle.x + obstacle.width >= canvas.width) {
-                    obstacle.direction *= -1;
-                }
+            friend.dataset.name = name;
+            friend.dataset.x = parseFloat(friend.style.left);
+            friend.dataset.y = parseFloat(friend.style.top);
+            friend.draggable = true;
+
+            friend.addEventListener("mousedown", startDrag);
+
+            mapContainer.appendChild(friend);
+            friends.push(friend);
+
+            updateFriendSelects();
+            document.getElementById("friendName").value = "";
+            drawConnections();
+        }
+
+        function updateFriendSelects() {
+            const friend1 = document.getElementById("friend1");
+            const friend2 = document.getElementById("friend2");
+            friend1.innerHTML = "";
+            friend2.innerHTML = "";
+
+            friends.forEach(friend => {
+                const option1 = new Option(friend.dataset.name, friend.dataset.name);
+                const option2 = new Option(friend.dataset.name, friend.dataset.name);
+                friend1.add(option1);
+                friend2.add(option2);
             });
+        }
 
-            // Check collision with obstacles
-            obstacles.forEach(obstacle => {
-                if (player.x < obstacle.x + obstacle.width && player.x + player.width > obstacle.x &&
-                    player.y < obstacle.y + obstacle.height && player.y + player.height > obstacle.y) {
-                    gameOver();
-                }
-            });
+        function connectFriends() {
+            const name1 = document.getElementById("friend1").value;
+            const name2 = document.getElementById("friend2").value;
+            if (name1 === name2) return alert("A person cannot date themselves!");
 
-            // Check collision with spikes
-            spikes.forEach(spike => {
-                if (player.x < spike.x + spike.width && player.x + player.width > spike.x &&
-                    player.y < spike.y + spike.height && player.y + player.height > spike.y) {
-                    gameOver();
-                }
-            });
+            const friend1 = friends.find(f => f.dataset.name === name1);
+            const friend2 = friends.find(f => f.dataset.name === name2);
 
-            // Check if player reached the goal
-            if (player.x < goal.x + goal.width && player.x + player.width > goal.x &&
-                player.y < goal.y + goal.height && player.y + player.height > goal.y) {
-                nextLevel();
+            if (connections.some(c => (c.a === friend1 && c.b === friend2) || (c.a === friend2 && c.b === friend1))) {
+                return alert("These friends are already connected!");
             }
+
+            connections.push({ a: friend1, b: friend2 });
+            drawConnections();
         }
 
-        function draw() {
+        function drawConnections() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = "red";
+            ctx.lineWidth = 3;
 
-            // Draw player
-            ctx.fillStyle = "blue";
-            ctx.fillRect(player.x, player.y, player.width, player.height);
-
-            // Draw goal
-            ctx.fillStyle = "green";
-            ctx.fillRect(goal.x, goal.y, goal.width, goal.height);
-
-            // Draw obstacles
-            ctx.fillStyle = "red";
-            obstacles.forEach(obstacle => ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height));
-
-            // Draw spikes
-            ctx.fillStyle = "brown";
-            spikes.forEach(spike => ctx.fillRect(spike.x, spike.y, spike.width, spike.height));
+            connections.forEach(({ a, b }) => {
+                ctx.beginPath();
+                ctx.moveTo(parseFloat(a.dataset.x) + 30, parseFloat(a.dataset.y) + 30);
+                ctx.lineTo(parseFloat(b.dataset.x) + 30, parseFloat(b.dataset.y) + 30);
+                ctx.stroke();
+            });
         }
 
-        function gameOver() {
-            document.getElementById("gameOver").style.display = "block";
-            clearInterval(game);
+        let draggedElement = null;
+        let offsetX, offsetY;
+
+        function startDrag(e) {
+            draggedElement = e.target;
+            offsetX = e.clientX - parseFloat(draggedElement.dataset.x);
+            offsetY = e.clientY - parseFloat(draggedElement.dataset.y);
+
+            document.addEventListener("mousemove", drag);
+            document.addEventListener("mouseup", stopDrag);
         }
 
-        function nextLevel() {
-            level++;
-            player.x = 50;
-            player.y = 350;
-            obstacles.push({ x: Math.random() * 400 + 100, y: Math.random() * 300 + 50, width: 100, height: 20, speed: Math.random() * 2 + 2, direction: 1 });
-            spikes.push({ x: Math.random() * 400 + 100, y: Math.random() * 300 + 50, width: 40, height: 20 });
-            alert(`Level ${level}! It gets harder!`);
+        function drag(e) {
+            if (!draggedElement) return;
+
+            let x = e.clientX - offsetX;
+            let y = e.clientY - offsetY;
+
+            x = Math.max(0, Math.min(mapContainer.clientWidth - 60, x));
+            y = Math.max(0, Math.min(mapContainer.clientHeight - 60, y));
+
+            draggedElement.style.left = x + "px";
+            draggedElement.style.top = y + "px";
+            draggedElement.dataset.x = x;
+            draggedElement.dataset.y = y;
+
+            drawConnections();
         }
 
-        function gameLoop() {
-            update();
-            draw();
-            requestAnimationFrame(gameLoop);
+        function stopDrag() {
+            document.removeEventListener("mousemove", drag);
+            document.removeEventListener("mouseup", stopDrag);
+            draggedElement = null;
         }
-
-        let game = setInterval(gameLoop, 1000 / 60);
     </script>
 </body>
 </html>
-
