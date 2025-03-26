@@ -1,301 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Task Manager</title>
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
-  <style>
-    body {
-      background: linear-gradient(to right, #ee9ca7, #ffdde1);
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    #toggleButtons {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    #toggleButtons button {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      font-weight: bold;
-      cursor: pointer;
-      background: #ddd;
-    }
-
-    #toggleButtons .active {
-      background: #2193b0;
-      color: white;
-    }
-
-    #taskForm {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 20px;
-      justify-content: center;
-    }
-
-    #taskForm input, #taskForm select {
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-
-    #taskForm button {
-      background: #28a745;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    #taskForm button:hover {
-      background: #218838;
-    }
-
-    .task-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #f9f9f9;
-      padding: 10px;
-      border-radius: 5px;
-      margin-bottom: 10px;
-    }
-
-    .task-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .task-text.completed {
-      text-decoration: line-through;
-      color: gray;
-    }
-
-    .delete-btn {
-      background: #dc3545;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      font-size: 14px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .priority-label {
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-weight: bold;
-      font-size: 14px;
-      color: white;
-    }
-
-    .High {
-      background-color: #e74c3c;
-    }
-
-    .Medium {
-      background-color: #f39c12;
-    }
-
-    .Low {
-      background-color: #2ecc71;
-    }
-
-    #calendarView {
-      display: none;
-      margin-top: 20px;
-    }
-
-    #calendar {
-      margin-top: 10px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hayden’s Deuce Dash</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        #gameArea {
+            width: 500px;
+            height: 500px;
+            border: 2px solid black;
+            position: relative;
+            margin: 20px auto;
+            background-color: lightgreen;
+            overflow: hidden;
+        }
+        .character, .poop {
+            width: 40px;
+            height: 40px;
+            position: absolute;
+            font-size: 30px;
+            text-align: center;
+        }
+        .character {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .poop {
+            color: brown;
+        }
+        #score {
+            font-size: 20px;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Task Manager</h1>
-
-    <div id="toggleButtons">
-      <button id="listToggle" class="active">Task List</button>
-      <button id="calToggle">Calendar View</button>
+    <h1>Hayden’s Deuce Dash 💩</h1>
+    <p>Move with arrow keys and collect as many poops as possible in 30 seconds!</p>
+    <div id="gameArea">
+        <div id="hayden" class="character">👩‍🦰</div>
+        <div id="player" class="character" style="top: 450px; left: 450px;">🚶‍♂️</div>
     </div>
+    <p id="score">Deuces: 0</p>
+    <button onclick="startGame()">Start Game</button>
 
-    <div id="taskForm">
-      <input type="text" id="taskDesc" placeholder="Task description" />
-      <input type="datetime-local" id="taskDateTime" />
-      <select id="taskPriority">
-        <option value="High">High</option>
-        <option value="Medium" selected>Medium</option>
-        <option value="Low">Low</option>
-      </select>
-      <button id="addTaskButton">Add Task</button>
-    </div>
+    <script>
+        let deuces = 0;
+        let timeLeft = 30;
+        let gameActive = false;
+        let hayden = document.getElementById("hayden");
+        let player = document.getElementById("player");
+        let gameArea = document.getElementById("gameArea");
 
-    <div id="taskListView">
-      <ul id="taskList"></ul>
-    </div>
+        function moveHayden() {
+            if (!gameActive) return;
 
-    <div id="calendarView">
-      <div id="calendar"></div>
-    </div>
-  </div>
+            let maxX = gameArea.clientWidth - 40;
+            let maxY = gameArea.clientHeight - 40;
+            let randomX = Math.floor(Math.random() * maxX);
+            let randomY = Math.floor(Math.random() * maxY);
 
-  <script>
-    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            hayden.style.left = randomX + "px";
+            hayden.style.top = randomY + "px";
 
-    function saveTasks() {
-      localStorage.setItem('tasks', JSON.stringify(tasks));
-    }
-
-    function formatDateTime(dtString) {
-      const d = new Date(dtString);
-      if (isNaN(d)) return dtString;
-      const year = d.getFullYear();
-      const month = (d.getMonth() + 1).toString().padStart(2, '0');
-      const day = d.getDate().toString().padStart(2, '0');
-      let hours = d.getHours();
-      const minutes = d.getMinutes().toString().padStart(2, '0');
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12 || 12;
-      return `${year}-${month}-${day} ${hours}:${minutes} ${ampm}`;
-    }
-
-    function renderTaskList() {
-      const taskList = document.getElementById('taskList');
-      taskList.innerHTML = '';
-      tasks.forEach((task, index) => {
-        const li = document.createElement('li');
-        li.className = 'task-item';
-
-        const infoDiv = document.createElement('div');
-        infoDiv.className = 'task-info';
-
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.checked = task.completed;
-        checkbox.onchange = () => {
-          tasks[index].completed = checkbox.checked;
-          saveTasks();
-          renderTaskList();
-        };
-
-        const priority = document.createElement('span');
-        priority.className = `priority-label ${task.priority}`;
-        priority.textContent = task.priority;
-
-        const text = document.createElement('span');
-        text.textContent = `${task.description} - Due: ${formatDateTime(task.datetime)}`;
-        text.className = 'task-text';
-        if (task.completed) text.classList.add('completed');
-
-        const deleteBtn = document.createElement('button');
-        deleteBtn.textContent = 'Delete';
-        deleteBtn.className = 'delete-btn';
-        deleteBtn.onclick = () => {
-          tasks.splice(index, 1);
-          saveTasks();
-          renderTaskList();
-        };
-
-        infoDiv.appendChild(checkbox);
-        infoDiv.appendChild(priority);
-        infoDiv.appendChild(text);
-        li.appendChild(infoDiv);
-        li.appendChild(deleteBtn);
-        taskList.appendChild(li);
-      });
-    }
-
-    document.getElementById('addTaskButton').onclick = () => {
-      const desc = document.getElementById('taskDesc').value.trim();
-      const date = document.getElementById('taskDateTime').value;
-      const priority = document.getElementById('taskPriority').value;
-
-      if (!desc || !date) {
-        alert('Please fill out both fields.');
-        return;
-      }
-
-      tasks.push({ description: desc, datetime: date, priority, completed: false });
-      tasks.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
-      saveTasks();
-      renderTaskList();
-
-      document.getElementById('taskDesc').value = '';
-      document.getElementById('taskDateTime').value = '';
-      document.getElementById('taskPriority').value = 'Medium';
-    };
-
-    renderTaskList();
-
-    let calendar;
-
-    function updateCalendarEvents() {
-      if (!calendar) return;
-      calendar.removeAllEvents();
-      tasks.forEach(task => {
-        if (task.datetime) {
-          calendar.addEvent({
-            title: task.description,
-            start: task.datetime,
-            color:
-              task.priority === 'High' ? '#e74c3c' :
-              task.priority === 'Medium' ? '#f39c12' :
-              '#2ecc71'
-          });
+            dropPoop(randomX, randomY);
         }
-      });
-    }
 
-    document.getElementById('listToggle').onclick = () => {
-      document.getElementById('taskListView').style.display = 'block';
-      document.getElementById('calendarView').style.display = 'none';
-      document.getElementById('listToggle').classList.add('active');
-      document.getElementById('calToggle').classList.remove('active');
-    };
+        function dropPoop(x, y) {
+            let poop = document.createElement("div");
+            poop.classList.add("poop");
+            poop.innerHTML = "💩";
+            poop.style.left = x + "px";
+            poop.style.top = y + "px";
+            gameArea.appendChild(poop);
 
-    document.getElementById('calToggle').onclick = () => {
-      document.getElementById('taskListView').style.display = 'none';
-      document.getElementById('calendarView').style.display = 'block';
-      document.getElementById('calToggle').classList.add('active');
-      document.getElementById('listToggle').classList.remove('active');
+            poop.addEventListener("click", function() {
+                deuces++;
+                document.getElementById("score").innerText = "Deuces: " + deuces;
+                poop.remove();
+            });
+        }
 
-      if (!calendar) {
-        calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
-          initialView: 'dayGridMonth'
+        document.addEventListener("keydown", function(event) {
+            if (!gameActive) return;
+
+            let playerX = player.offsetLeft;
+            let playerY = player.offsetTop;
+            let step = 20;
+
+            if (event.key === "ArrowUp" && playerY > 0) player.style.top = playerY - step + "px";
+            if (event.key === "ArrowDown" && playerY < gameArea.clientHeight - 40) player.style.top = playerY + step + "px";
+            if (event.key === "ArrowLeft" && playerX > 0) player.style.left = playerX - step + "px";
+            if (event.key === "ArrowRight" && playerX < gameArea.clientWidth - 40) player.style.left = playerX + step + "px";
         });
-        calendar.render();
-      }
 
-      updateCalendarEvents();
-    };
-  </script>
+        function startGame() {
+            deuces = 0;
+            timeLeft = 30;
+            gameActive = true;
+            document.getElementById("score").innerText = "Deuces: " + deuces;
+
+            let haydenTimer = setInterval(moveHayden, 2000);
+            let gameTimer = setInterval(function() {
+                timeLeft--;
+                if (timeLeft <= 0) {
+                    clearInterval(haydenTimer);
+                    clearInterval(gameTimer);
+                    gameActive = false;
+                    alert("Time's up! Final Deuces: " + deuces);
+                }
+            }, 1000);
+        }
+    </script>
 </body>
 </html>
