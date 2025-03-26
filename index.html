@@ -35,7 +35,9 @@
         .active {
             display: block;
         }
-        button {
+        button {00
+
+
             background: #5c946e;
             color: white;
             border: none;
@@ -58,7 +60,7 @@
         }
         table {
             width: 100%;
-            border-collapse: collapse;
+            -collapse: collapse;
             margin-top: 20px;
         }
         th, td {
@@ -92,35 +94,15 @@
         <a href="about.html">About</a>
         <a href="instagram-link" id="instagram-link">Instagram</a>
     </nav>
-
+   
     <div class="container">
-        <!-- Home Section -->
         <div id="home" class="section active">
             <h1 id="home-title">Welcome to C&B’s Flower Truck!</h1>
             <img id="home-image" src="logo.png" alt="C&B’s Flower Truck Logo" width="200">
             <p id="home-description">C&B’s Travel Florist - Bringing fresh flowers to markets, graduations, weddings, and events! Active from April to October.</p>
         </div>
 
-        <!-- Order Section (Customer Order Form) -->
-        <div id="order" class="section">
-            <h2>Place Your Order</h2>
-            <form id="order-form">
-                <label for="customer-name">Your Name:</label>
-                <input type="text" id="customer-name" placeholder="Enter your name" required><br>
-                <label for="customer-phone">Phone Number:</label>
-                <input type="text" id="customer-phone" placeholder="Enter your phone number" required><br>
-                <label for="flower-selection">Choose Flower:</label>
-                <select id="flower-selection">
-                    <option value="Rose - $5">Rose - $5</option>
-                    <option value="Tulip - $4">Tulip - $4</option>
-                    <option value="Daisy - $3">Daisy - $3</option>
-                    <!-- Add more options as needed -->
-                </select><br>
-                <button type="submit">Submit Order</button>
-            </form>
-        </div>
 
-        <!-- Admin Section -->
         <div id="admin" class="section">
             <h2>Admin Login</h2>
             <input type="text" id="username" placeholder="Username">
@@ -129,7 +111,7 @@
            
             <div id="admin-dashboard" style="display:none;">
                 <h2>Admin Dashboard</h2>
-                
+               
                 <!-- Editable Fields for Admin -->
                 <div class="admin-section">
                     <h3>Update Flower Inventory</h3>
@@ -145,7 +127,8 @@
                     <button onclick="addRow()">Add Flower</button>
                 </div>
 
-                <!-- Business Info Editing -->
+
+                <!-- Location, Hours, etc. -->
                 <div class="admin-section">
                     <h3>Update Business Info</h3>
                     <label for="business-location">Location:</label>
@@ -159,7 +142,8 @@
                     <button onclick="saveBusinessInfo()">Save Info</button>
                 </div>
 
-                <!-- Customize Website Colors -->
+
+                <!-- Change Colors -->
                 <div class="admin-section">
                     <h3>Customize Website Colors</h3>
                     <label for="background-color">Background Color:</label>
@@ -167,6 +151,7 @@
                     <label for="text-color">Text Color:</label>
                     <input type="color" id="text-color" onchange="changeTextColor()">
                 </div>
+
 
                 <!-- Home Page Customization -->
                 <div class="admin-section">
@@ -179,23 +164,29 @@
                     <input type="text" id="home-image-input" placeholder="Enter image URL">
                     <button onclick="saveHomePageInfo()">Save Home Page Info</button>
                 </div>
-
-                <!-- View Customer Orders -->
-                <div class="admin-section">
-                    <h3>View Customer Orders</h3>
-                    <table id="orders-table">
-                        <tr>
-                            <th>Name</th>
-                            <th>Phone Number</th>
-                            <th>Flower Ordered</th>
-                        </tr>
-                        <!-- Orders will load dynamically -->
-                    </table>
-                </div>
             </div>
         </div>
-    </div>
 
+
+        <div id="flowers" class="section">
+            <h2>Flowers Available</h2>
+            <table id="flowers-table">
+                <tr>
+                    <th>Flower Name</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                </tr>
+                <!-- Dynamic Flower Inventory will load here -->
+            </table>
+        </div>
+
+
+        <div id="location" class="section">
+            <h2>Live Location</h2>
+            <p id="location-info">Loading location...</p>
+        </div>
+    </div>
+   
     <script>
         function showSection(sectionId) {
             let sections = document.querySelectorAll('.section');
@@ -203,48 +194,19 @@
             document.getElementById(sectionId).classList.add('active');
         }
 
+
         function checkLogin() {
             let username = document.getElementById("username").value;
             let password = document.getElementById("password").value;
             if (username === "cleo" && password === "baker") {
                 document.getElementById("admin-dashboard").style.display = "block";
                 loadSavedData();
-                loadOrders(); // Load orders after admin login
             } else {
                 alert("Invalid login!");
             }
         }
 
-        // Handle order submission
-        document.getElementById("order-form").addEventListener("submit", function(e) {
-            e.preventDefault();
 
-            let name = document.getElementById("customer-name").value;
-            let phone = document.getElementById("customer-phone").value;
-            let flower = document.getElementById("flower-selection").value;
-
-            // Store the order data in localStorage
-            let orders = JSON.parse(localStorage.getItem("orders")) || [];
-            orders.push({ name, phone, flower });
-            localStorage.setItem("orders", JSON.stringify(orders));
-
-            alert("Your order has been submitted!");
-            document.getElementById("order-form").reset();  // Reset the form fields
-        });
-
-        // Load saved orders
-        function loadOrders() {
-            let orders = JSON.parse(localStorage.getItem("orders")) || [];
-            let table = document.getElementById("orders-table");
-            orders.forEach(order => {
-                let row = table.insertRow(-1);
-                row.innerHTML = `<td>${order.name}</td>
-                                 <td>${order.phone}</td>
-                                 <td>${order.flower}</td>`;
-            });
-        }
-
-        // Admin Functions for Inventory and Business Info
         function addRow() {
             let table = document.getElementById("inventory-table");
             let row = table.insertRow(-1);
@@ -254,12 +216,34 @@
                              <td><button onclick="deleteRow(this)">Delete</button></td>`;
         }
 
+
         function deleteRow(button) {
             let row = button.parentNode.parentNode;
             row.parentNode.removeChild(row);
             saveFlowerData(); // Save after deletion
         }
 
+
+        function saveBusinessInfo() {
+            let location = document.getElementById("business-location").value;
+            let hours = document.getElementById("business-hours").value;
+            let venmoLink = document.getElementById("venmo-link").value;
+            let instagramLink = document.getElementById("instagram-link-admin").value;
+
+
+            localStorage.setItem("businessLocation", location);
+            localStorage.setItem("businessHours", hours);
+            localStorage.setItem("venmoLink", venmoLink);
+            localStorage.setItem("instagramLink", instagramLink);
+
+
+            alert(`Business Info Saved:\nLocation: ${location}\nHours: ${hours}\nVenmo: ${venmoLink}\nInstagram: ${instagramLink}`);
+            updateLocationAndHours();
+            updateLinks();
+        }
+
+
+        // Save flower inventory to localStorage
         function saveFlowerData() {
             let table = document.getElementById("inventory-table");
             let flowers = [];
@@ -268,68 +252,107 @@
                 let flowerName = row.cells[0].innerText;
                 let quantity = row.cells[1].innerText;
                 let price = row.cells[2].innerText;
-                flowers.push({ flowerName, quantity, price });
+                flowers.push({ name: flowerName, quantity: quantity, price: price });
             }
-            localStorage.setItem("flowers", JSON.stringify(flowers));
+            localStorage.setItem("flowerInventory", JSON.stringify(flowers));
+            loadSavedData(); // Update the displayed inventory
         }
 
-        function saveBusinessInfo() {
-            let location = document.getElementById("business-location").value;
-            let hours = document.getElementById("business-hours").value;
-            let venmoLink = document.getElementById("venmo-link").value;
-            let instagramLink = document.getElementById("instagram-link-admin").value;
 
-            let businessInfo = { location, hours, venmoLink, instagramLink };
-            localStorage.setItem("businessInfo", JSON.stringify(businessInfo));
-            alert("Business information saved!");
-        }
-
+        // Load saved data (flower inventory, business location, etc.)
         function loadSavedData() {
-            let businessInfo = JSON.parse(localStorage.getItem("businessInfo"));
-            if (businessInfo) {
-                document.getElementById("business-location").value = businessInfo.location;
-                document.getElementById("business-hours").value = businessInfo.hours;
-                document.getElementById("venmo-link").value = businessInfo.venmoLink;
-                document.getElementById("instagram-link-admin").value = businessInfo.instagramLink;
-            }
-
-            let flowers = JSON.parse(localStorage.getItem("flowers"));
-            if (flowers) {
+            let flowerInventory = JSON.parse(localStorage.getItem("flowerInventory"));
+            if (flowerInventory) {
                 let table = document.getElementById("inventory-table");
-                flowers.forEach(flower => {
+                table.innerHTML = `<tr><th>Flower Name</th><th>Quantity</th><th>Price</th><th>Actions</th></tr>`; // Reset table
+                flowerInventory.forEach(flower => {
                     let row = table.insertRow(-1);
-                    row.innerHTML = `<td contenteditable="true">${flower.flowerName}</td>
+                    row.innerHTML = `<td contenteditable="true">${flower.name}</td>
                                      <td contenteditable="true">${flower.quantity}</td>
                                      <td contenteditable="true">${flower.price}</td>
                                      <td><button onclick="deleteRow(this)">Delete</button></td>`;
                 });
             }
+            // Update business info in location and hours sections
+            updateLocationAndHours();
+            updateLinks();
+            updateHomePageInfo();
         }
 
-        // Customization Functions
-        function changeBackgroundColor() {
-            let color = document.getElementById("background-color").value;
-            document.body.style.backgroundColor = color;
+
+        // Update location and hours displayed
+        function updateLocationAndHours() {
+            let location = localStorage.getItem("businessLocation");
+            let hours = localStorage.getItem("businessHours");
+            document.getElementById("location-info").innerHTML = `Location: <a href="https://www.google.com/maps/search/?q=${encodeURIComponent(location)}" target="_blank">${location || "Not set"}</a><br>Hours: ${hours || "Not set"}`;
         }
 
-        function changeTextColor() {
-            let color = document.getElementById("text-color").value;
-            document.body.style.color = color;
+
+        // Update Instagram and Venmo links
+        function updateLinks() {
+            let instagramLink = localStorage.getItem("instagramLink");
+            let venmoLink = localStorage.getItem("venmoLink");
+            document.getElementById("instagram-link").href = instagramLink || "#";
         }
 
+
+        // Update Home Page Info
+        function updateHomePageInfo() {
+            let title = localStorage.getItem("homeTitle");
+            let description = localStorage.getItem("homeDescription");
+            let image = localStorage.getItem("homeImage");
+            document.getElementById("home-title").innerText = title || "Welcome to C&B’s Flower Truck!";
+            document.getElementById("home-description").innerText = description || "C&B’s Travel Florist - Bringing fresh flowers to markets, graduations, weddings, and events!";
+            document.getElementById("home-image").src = image || "logo.png";
+        }
+
+
+        // Save Home Page Info
         function saveHomePageInfo() {
             let title = document.getElementById("home-title-input").value;
             let description = document.getElementById("home-description-input").value;
-            let imageUrl = document.getElementById("home-image-input").value;
-
-            document.getElementById("home-title").innerText = title;
-            document.getElementById("home-description").innerText = description;
-            document.getElementById("home-image").src = imageUrl;
-
-            alert("Home page information updated!");
+            let image = document.getElementById("home-image-input").value;
+            localStorage.setItem("homeTitle", title);
+            localStorage.setItem("homeDescription", description);
+            localStorage.setItem("homeImage", image);
+            updateHomePageInfo();
+            alert("Home Page Info Saved!");
         }
+
+
+        // Change Background Color
+        function changeBackgroundColor() {
+            let bgColor = document.getElementById("background-color").value;
+            document.body.style.backgroundColor = bgColor;
+            localStorage.setItem("backgroundColor", bgColor);
+        }
+
+
+        // Change Text Color
+        function changeTextColor() {
+            let textColor = document.getElementById("text-color").value;
+            document.body.style.color = textColor;
+            localStorage.setItem("textColor", textColor);
+        }
+
+
+        // Apply saved styles
+        function applySavedStyles() {
+            let bgColor = localStorage.getItem("backgroundColor");
+            let textColor = localStorage.getItem("textColor");
+            if (bgColor) document.body.style.backgroundColor = bgColor;
+            if (textColor) document.body.style.color = textColor;
+        }
+
+
+        // Run applySavedStyles when the page loads
+        window.onload = applySavedStyles;
     </script>
 </body>
 </html>
+
+
+
+
 
 
