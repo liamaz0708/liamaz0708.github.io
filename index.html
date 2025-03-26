@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Riley’s Crazy Love Story</title>
+    <title>Mad Hayden: Punch & Dab</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -22,193 +22,115 @@
             margin: 20px auto;
             background-color: #eee;
         }
-        /* Riley's Jeep */
-        #riley {
-            position: absolute;
-            width: 50px;
-            height: 30px;
-            background: red;
-            bottom: 10px;
-            left: 50px;
-            border-radius: 5px;
-        }
-        .wheel {
-            width: 10px;
-            height: 10px;
-            background: black;
-            border-radius: 50%;
-            position: absolute;
-            bottom: -5px;
-        }
-        .wheel.left {
-            left: 5px;
-        }
-        .wheel.right {
-            right: 5px;
-        }
-        /* Riley (Stick figure inside the Jeep) */
-        #riley::after {
-            content: "🙂"; /* Riley's face */
-            position: absolute;
-            top: -20px;
-            left: 15px;
-        }
-        /* School */
-        #school {
-            position: absolute;
-            width: 100px;
-            height: 80px;
-            background: blue;
-            top: 20px;
-            left: 450px;
-            color: white;
-            text-align: center;
-            line-height: 80px;
-            font-weight: bold;
-        }
-        /* Riley's House */
-        #house {
-            position: absolute;
-            width: 100px;
-            height: 80px;
-            background: brown;
-            top: 300px;
-            left: 50px;
-            color: white;
-            text-align: center;
-            line-height: 80px;
-            font-weight: bold;
-        }
-        /* Boys */
-        .boy {
+        /* Hayden (Angry Stick Figure) */
+        #hayden {
             position: absolute;
             width: 20px;
             height: 40px;
-            display: none;
             text-align: center;
             font-size: 20px;
-            cursor: pointer;
+            left: 50px;
+            top: 180px;
         }
-        .boy::before {
-            content: "😀"; /* Head */
+        #hayden::before {
+            content: "😠"; /* Angry Face */
             display: block;
         }
-        /* Boy Inside Jeep */
-        #boyInCar {
+        /* Other Characters (People Hayden Can Punch) */
+        .person {
             position: absolute;
-            display: none;
-            top: -20px;
-            right: 10px;
-        }
-        /* Baby */
-        #baby {
-            position: absolute;
-            width: 40px;
+            width: 20px;
             height: 40px;
-            display: none;
+            text-align: center;
             font-size: 20px;
-            color: pink;
-            top: 250px;
-            left: 200px;
         }
-        #message {
+        .person::before {
+            content: "🙂"; /* Default Face */
+            display: block;
+        }
+        /* Punch Effect */
+        .punched::before {
+            content: "💀"; /* KO Face */
+        }
+        /* Dab Effect */
+        #dab-message {
+            display: none;
             font-size: 18px;
             font-weight: bold;
-            margin-top: 10px;
+            color: purple;
         }
     </style>
 </head>
 <body>
 
-    <h1>🚗 Riley’s Crazy Love Story Adventure! 💕</h1>
-    <p>Drive Riley to Horseheads School, pick up a boy, drive back home, and watch the drama unfold! 😂</p>
+    <h1>👊 "Mad Hayden: Punch & Dab!" 💀</h1>
+    <p>Move around using arrow keys. Press SPACEBAR to punch people. Hayden will automatically dab after each punch.</p>
 
     <div id="game-container">
-        <!-- Riley in the Jeep -->
-        <div id="riley">
-            <div class="wheel left"></div>
-            <div class="wheel right"></div>
-            <span id="boyInCar"></span> <!-- The boy sits here when picked -->
-        </div>
+        <!-- Hayden (Main Character) -->
+        <div id="hayden"></div>
 
-        <!-- Horseheads School -->
-        <div id="school">Horseheads</div>
-
-        <!-- Riley's House -->
-        <div id="house">🏠 Riley’s House</div>
-
-        <!-- Different Boys -->
-        <div id="boy1" class="boy" style="top: 100px; left: 300px;" onclick="pickBoy('Zach', '🧢')"></div>
-        <div id="boy2" class="boy" style="top: 100px; left: 350px;" onclick="pickBoy('Miles', '🎸')"></div>
-        <div id="boy3" class="boy" style="top: 100px; left: 400px;" onclick="pickBoy('Quin', '⚽')"></div>
-
-        <!-- Baby appears -->
-        <div id="baby">👶 "Congratulations! It's a girl!"</div>
+        <!-- People to Punch -->
+        <div id="lia" class="person" style="top: 50px; left: 200px;">Lia</div>
+        <div id="teigen" class="person" style="top: 150px; left: 350px;">Teigen</div>
+        <div id="riley" class="person" style="top: 250px; left: 100px;">Riley</div>
+        <div id="melina" class="person" style="top: 80px; left: 400px;">Melina</div>
+        <div id="kyler" class="person" style="top: 300px; left: 250px;">Kyler</div>
+        <div id="taylor" class="person" style="top: 200px; left: 500px;">Taylor</div>
+        <div id="mrAsiello" class="person" style="top: 100px; left: 50px;">Mr. Asiello</div>
     </div>
 
-    <p id="message"></p>
+    <p id="dab-message">💃 Hayden just dabbed! 😂</p>
 
     <script>
-        let riley = document.getElementById("riley");
-        let boys = document.querySelectorAll(".boy");
-        let message = document.getElementById("message");
-        let boyInCar = document.getElementById("boyInCar");
-        let baby = document.getElementById("baby");
+        let hayden = document.getElementById("hayden");
+        let people = document.querySelectorAll(".person");
+        let dabMessage = document.getElementById("dab-message");
 
         let positionX = 50;
-        let positionY = 330;
-        let pickedBoy = "";
+        let positionY = 180;
 
         document.addEventListener("keydown", function(event) {
-            if (event.key === "ArrowRight" && positionX < 500) {
+            if (event.key === "ArrowRight" && positionX < 580) {
                 positionX += 10;
             } else if (event.key === "ArrowLeft" && positionX > 10) {
                 positionX -= 10;
             } else if (event.key === "ArrowUp" && positionY > 10) {
                 positionY -= 10;
-            } else if (event.key === "ArrowDown" && positionY < 330) {
+            } else if (event.key === "ArrowDown" && positionY < 350) {
                 positionY += 10;
             }
-            
-            riley.style.left = positionX + "px";
-            riley.style.top = positionY + "px";
 
-            // If Riley reaches the school
-            if (positionX >= 450 && positionY <= 50 && !pickedBoy) {
-                showBoys();
-            }
+            hayden.style.left = positionX + "px";
+            hayden.style.top = positionY + "px";
+        });
 
-            // If Riley gets back home with a boy
-            if (positionX <= 80 && positionY >= 300 && pickedBoy) {
-                showBaby();
+        document.addEventListener("keydown", function(event) {
+            if (event.key === " ") { // Spacebar = Punch
+                punchPerson();
             }
         });
 
-        function showBoys() {
-            boys.forEach(boy => {
-                boy.style.display = "block";
-            });
-            message.innerText = "Pick a boy to give a ride home!";
-        }
+        function punchPerson() {
+            people.forEach(person => {
+                let personX = parseInt(person.style.left);
+                let personY = parseInt(person.style.top);
 
-        function pickBoy(name, emoji) {
-            pickedBoy = name;
-            boyInCar.innerText = emoji;
-            boyInCar.style.display = "inline";
-            message.innerText = `🚗 Riley picked up ${name}! Now drive home. 🏠`;
-            boys.forEach(boy => {
-                boy.style.display = "none";
+                // Check if Hayden is close enough to punch
+                if (Math.abs(personX - positionX) < 20 && Math.abs(personY - positionY) < 20) {
+                    person.classList.add("punched");
+                    dab();
+                }
             });
         }
 
-        function showBaby() {
-            message.innerText = `💕 ${pickedBoy}: "I love you, Riley!"`;
+        function dab() {
+            dabMessage.style.display = "block";
             setTimeout(() => {
-                baby.style.display = "block";
-            }, 2000);
+                dabMessage.style.display = "none";
+            }, 1000);
         }
     </script>
 
 </body>
 </html>
-
