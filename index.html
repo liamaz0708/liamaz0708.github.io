@@ -19,34 +19,33 @@
             margin: auto;
             overflow: hidden;
         }
-        .friend {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            background-color: pink;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 60px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: grab;
-        }
         canvas {
             position: absolute;
             top: 0;
             left: 0;
             pointer-events: none;
         }
+        .controls {
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
     <h1>Dating Connection Map 💕</h1>
-    <p>Add your friends and connect couples!</p>
+    <p>Add your friends, create stick figure avatars, and connect couples!</p>
 
-    <input type="text" id="friendName" placeholder="Enter a friend's name">
-    <button onclick="addFriend()">Add Friend</button>
+    <div class="controls">
+        <input type="text" id="friendName" placeholder="Friend's Name">
+        <label>Hair Color:</label>
+        <input type="color" id="hairColor">
+        <label>Body Color:</label>
+        <input type="color" id="bodyColor">
+        <label>Height:</label>
+        <input type="range" id="height" min="30" max="80" value="50">
+        <button onclick="addFriend()">Add Friend</button>
+    </div>
 
-    <br><br>
+    <br>
 
     <select id="friend1"></select>
     <select id="friend2"></select>
@@ -68,27 +67,25 @@
 
         function addFriend() {
             const name = document.getElementById("friendName").value.trim();
+            const hairColor = document.getElementById("hairColor").value;
+            const bodyColor = document.getElementById("bodyColor").value;
+            const height = document.getElementById("height").value;
+
             if (!name) return alert("Enter a valid name!");
 
-            const friend = document.createElement("div");
-            friend.className = "friend";
-            friend.textContent = name;
-            friend.style.left = Math.random() * (mapContainer.clientWidth - 60) + "px";
-            friend.style.top = Math.random() * (mapContainer.clientHeight - 60) + "px";
+            const friend = {
+                name,
+                x: Math.random() * (mapContainer.clientWidth - 60),
+                y: Math.random() * (mapContainer.clientHeight - 80),
+                hairColor,
+                bodyColor,
+                height: parseInt(height),
+                isDragging: false
+            };
 
-            friend.dataset.name = name;
-            friend.dataset.x = parseFloat(friend.style.left);
-            friend.dataset.y = parseFloat(friend.style.top);
-            friend.draggable = true;
-
-            friend.addEventListener("mousedown", startDrag);
-
-            mapContainer.appendChild(friend);
             friends.push(friend);
-
             updateFriendSelects();
-            document.getElementById("friendName").value = "";
-            drawConnections();
+            drawScene();
         }
 
         function updateFriendSelects() {
@@ -98,8 +95,8 @@
             friend2.innerHTML = "";
 
             friends.forEach(friend => {
-                const option1 = new Option(friend.dataset.name, friend.dataset.name);
-                const option2 = new Option(friend.dataset.name, friend.dataset.name);
+                const option1 = new Option(friend.name, friend.name);
+                const option2 = new Option(friend.name, friend.name);
                 friend1.add(option1);
                 friend2.add(option2);
             });
@@ -110,64 +107,107 @@
             const name2 = document.getElementById("friend2").value;
             if (name1 === name2) return alert("A person cannot date themselves!");
 
-            const friend1 = friends.find(f => f.dataset.name === name1);
-            const friend2 = friends.find(f => f.dataset.name === name2);
+            const friend1 = friends.find(f => f.name === name1);
+            const friend2 = friends.find(f => f.name === name2);
 
             if (connections.some(c => (c.a === friend1 && c.b === friend2) || (c.a === friend2 && c.b === friend1))) {
                 return alert("These friends are already connected!");
             }
 
             connections.push({ a: friend1, b: friend2 });
-            drawConnections();
+            drawScene();
         }
 
-        function drawConnections() {
+        function drawScene() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw connections
             ctx.strokeStyle = "red";
             ctx.lineWidth = 3;
-
             connections.forEach(({ a, b }) => {
                 ctx.beginPath();
-                ctx.moveTo(parseFloat(a.dataset.x) + 30, parseFloat(a.dataset.y) + 30);
-                ctx.lineTo(parseFloat(b.dataset.x) + 30, parseFloat(b.dataset.y) + 30);
+                ctx.moveTo(a.x + 30, a.y + 40);
+                ctx.lineTo(b.x + 30, b.y + 40);
                 ctx.stroke();
             });
+
+            // Draw friends
+            friends.forEach(friend => drawStickFigure(friend));
         }
 
-        let draggedElement = null;
+        function drawStickFigure(friend) {
+            ctx.fillStyle = friend.bodyColor;
+            ctx.strokeStyle = "black";
+            ctx.lineWidth = 2;
+
+            let headSize = 20;
+            let bodyHeight = friend.height;
+
+            // Draw head
+            ctx.beginPath();
+            ctx.arc(friend.x + 30, friend.y + 20, headSize / 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Draw hair
+            ctx.fillStyle = friend.hairColor;
+            ctx.fillRect(friend.x + 20, friend.y + 10, 20, 10);
+
+            // Draw body
+            ctx.strokeStyle = friend.bodyColor;
+            ctx.beginPath();
+            ctx.moveTo(friend.x + 30, friend.y + 20);
+            ctx.lineTo(friend.x + 30, friend.y + 20 + bodyHeight);
+            ctx.stroke();
+
+            // Draw arms
+            ctx.beginPath();
+            ctx.moveTo(friend.x + 10, friend.y + 30);
+            ctx.lineTo(friend.x + 50, friend.y + 30);
+            ctx.stroke();
+
+            // Draw legs
+            ctx.beginPath();
+            ctx.moveTo(friend.x + 30, friend.y + 20 + bodyHeight);
+            ctx.lineTo(friend.x + 15, friend.y + 20 + bodyHeight + 20);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(friend.x + 30, friend.y + 20 + bodyHeight);
+            ctx.lineTo(friend.x + 45, friend.y + 20 + bodyHeight + 20);
+            ctx.stroke();
+        }
+
+        let draggingFriend = null;
         let offsetX, offsetY;
 
-        function startDrag(e) {
-            draggedElement = e.target;
-            offsetX = e.clientX - parseFloat(draggedElement.dataset.x);
-            offsetY = e.clientY - parseFloat(draggedElement.dataset.y);
+        canvas.addEventListener("mousedown", (e) => {
+            const mouseX = e.offsetX;
+            const mouseY = e.offsetY;
 
-            document.addEventListener("mousemove", drag);
-            document.addEventListener("mouseup", stopDrag);
-        }
+            friends.forEach(friend => {
+                let headSize = 20;
+                if (mouseX > friend.x + 20 && mouseX < friend.x + 40 && mouseY > friend.y && mouseY < friend.y + headSize) {
+                    draggingFriend = friend;
+                    offsetX = mouseX - friend.x;
+                    offsetY = mouseY - friend.y;
+                }
+            });
+        });
 
-        function drag(e) {
-            if (!draggedElement) return;
+        canvas.addEventListener("mousemove", (e) => {
+            if (draggingFriend) {
+                draggingFriend.x = e.offsetX - offsetX;
+                draggingFriend.y = e.offsetY - offsetY;
+                drawScene();
+            }
+        });
 
-            let x = e.clientX - offsetX;
-            let y = e.clientY - offsetY;
+        canvas.addEventListener("mouseup", () => {
+            draggingFriend = null;
+        });
 
-            x = Math.max(0, Math.min(mapContainer.clientWidth - 60, x));
-            y = Math.max(0, Math.min(mapContainer.clientHeight - 60, y));
-
-            draggedElement.style.left = x + "px";
-            draggedElement.style.top = y + "px";
-            draggedElement.dataset.x = x;
-            draggedElement.dataset.y = y;
-
-            drawConnections();
-        }
-
-        function stopDrag() {
-            document.removeEventListener("mousemove", drag);
-            document.removeEventListener("mouseup", stopDrag);
-            draggedElement = null;
-        }
+        drawScene();
     </script>
 </body>
 </html>
