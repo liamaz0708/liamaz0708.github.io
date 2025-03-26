@@ -3,124 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Get Out of the Corning School Parking Lot</title>
+    <title>Teigen vs. Rohan Soccer</title>
     <style>
         body {
             text-align: center;
             font-family: Arial, sans-serif;
-            background-color: #eee;
+            background-color: #2c3e50;
+            color: white;
         }
         canvas {
-            background: url('https://images.unsplash.com/photo-1566454680197-5b42379d1bf3') center/cover;
-            border: 2px solid black;
+            background: green;
+            border: 3px solid white;
+        }
+        #score {
+            font-size: 24px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <h1>Get Out of the Corning School Parking Lot</h1>
-    <p>Use arrow keys to drive out as fast as possible!</p>
-    <canvas id="gameCanvas" width="600" height="400"></canvas>
-    <p id="timer">Time: 0s</p>
+    <h1>Teigen vs. Rohan Soccer</h1>
+    <p>Teigen (Left) uses <strong>WASD</strong> | Rohan (Right) uses <strong>Arrow Keys</strong></p>
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    <p id="score">Teigen: 0 | Rohan: 0</p>
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
 
-        // Game variables
-        let player = { x: 50, y: 350, width: 30, height: 50, speed: 5 };
-        let obstacles = [];
-        let pedestrians = [];
-        let exit = { x: 550, y: 10, width: 50, height: 20 };
+        // Game objects
+        let teigen = { x: 50, y: 175, width: 30, height: 30, speed: 5 };
+        let rohan = { x: 720, y: 175, width: 30, height: 30, speed: 5 };
+        let ball = { x: 390, y: 190, radius: 15, dx: 3, dy: 2 };
         let keys = {};
-        let startTime = Date.now();
-        let gameOver = false;
-
-        // Generate random obstacles (cars)
-        for (let i = 0; i < 5; i++) {
-            obstacles.push({
-                x: Math.random() * 500 + 50,
-                y: Math.random() * 250 + 50,
-                width: 40,
-                height: 60,
-                speed: Math.random() * 2 + 1
-            });
-        }
-
-        // Generate random pedestrians
-        for (let i = 0; i < 3; i++) {
-            pedestrians.push({
-                x: Math.random() * 500 + 50,
-                y: Math.random() * 250 + 50,
-                width: 20,
-                height: 20,
-                speed: Math.random() * 1 + 0.5
-            });
-        }
+        let score = { teigen: 0, rohan: 0 };
 
         // Key event listeners
         document.addEventListener("keydown", (e) => keys[e.key] = true);
         document.addEventListener("keyup", (e) => keys[e.key] = false);
 
         function update() {
-            if (gameOver) return;
+            // Teigen movement (WASD)
+            if (keys["w"] && teigen.y > 0) teigen.y -= teigen.speed;
+            if (keys["s"] && teigen.y < canvas.height - teigen.height) teigen.y += teigen.speed;
+            if (keys["a"] && teigen.x > 0) teigen.x -= teigen.speed;
+            if (keys["d"] && teigen.x < canvas.width / 2 - teigen.width) teigen.x += teigen.speed;
 
-            // Move player car
-            if (keys["ArrowUp"] && player.y > 0) player.y -= player.speed;
-            if (keys["ArrowDown"] && player.y < canvas.height - player.height) player.y += player.speed;
-            if (keys["ArrowLeft"] && player.x > 0) player.x -= player.speed;
-            if (keys["ArrowRight"] && player.x < canvas.width - player.width) player.x += player.speed;
+            // Rohan movement (Arrow Keys)
+            if (keys["ArrowUp"] && rohan.y > 0) rohan.y -= rohan.speed;
+            if (keys["ArrowDown"] && rohan.y < canvas.height - rohan.height) rohan.y += rohan.speed;
+            if (keys["ArrowLeft"] && rohan.x > canvas.width / 2) rohan.x -= rohan.speed;
+            if (keys["ArrowRight"] && rohan.x < canvas.width - rohan.width) rohan.x += rohan.speed;
 
-            // Move obstacles (cars)
-            obstacles.forEach(car => {
-                car.y += car.speed;
-                if (car.y > canvas.height) car.y = -car.height;
-            });
+            // Ball movement
+            ball.x += ball.dx;
+            ball.y += ball.dy;
 
-            // Move pedestrians
-            pedestrians.forEach(person => {
-                person.x += person.speed;
-                if (person.x > canvas.width || person.x < 0) person.speed *= -1;
-            });
+            // Ball collision with top and bottom
+            if (ball.y <= 0 || ball.y >= canvas.height) ball.dy *= -1;
 
-            // Collision detection (if player hits a car or pedestrian)
-            [...obstacles, ...pedestrians].forEach(obj => {
-                if (player.x < obj.x + obj.width && player.x + player.width > obj.x &&
-                    player.y < obj.y + obj.height && player.y + player.height > obj.y) {
-                    gameOver = true;
-                    alert("You crashed! Try again.");
-                    location.reload();
-                }
-            });
-
-            // Check if player reaches the exit
-            if (player.x < exit.x + exit.width && player.x + player.width > exit.x &&
-                player.y < exit.y + exit.height && player.y + player.height > exit.y) {
-                let timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
-                alert(`You escaped in ${timeTaken} seconds!`);
-                location.reload();
+            // Ball collision with players
+            if (ball.x < teigen.x + teigen.width && ball.x + ball.radius > teigen.x &&
+                ball.y < teigen.y + teigen.height && ball.y + ball.radius > teigen.y) {
+                ball.dx *= -1;
             }
 
-            // Update timer
-            document.getElementById("timer").textContent = `Time: ${((Date.now() - startTime) / 1000).toFixed(2)}s`;
+            if (ball.x < rohan.x + rohan.width && ball.x + ball.radius > rohan.x &&
+                ball.y < rohan.y + rohan.height && ball.y + ball.radius > rohan.y) {
+                ball.dx *= -1;
+            }
+
+            // Goal detection
+            if (ball.x <= 0) {
+                score.rohan++;
+                resetBall();
+            } else if (ball.x >= canvas.width) {
+                score.teigen++;
+                resetBall();
+            }
+
+            // Update score display
+            document.getElementById("score").textContent = `Teigen: ${score.teigen} | Rohan: ${score.rohan}`;
+
+            // Check for winner
+            if (score.teigen === 3) {
+                alert("Teigen wins!");
+                resetGame();
+            } else if (score.rohan === 3) {
+                alert("Rohan wins!");
+                resetGame();
+            }
         }
 
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Draw exit
-            ctx.fillStyle = "green";
-            ctx.fillRect(exit.x, exit.y, exit.width, exit.height);
+            // Draw middle line
+            ctx.fillStyle = "white";
+            ctx.fillRect(canvas.width / 2 - 2, 0, 4, canvas.height);
 
-            // Draw player car
+            // Draw goals
+            ctx.fillStyle = "yellow";
+            ctx.fillRect(0, 150, 10, 100);
+            ctx.fillRect(canvas.width - 10, 150, 10, 100);
+
+            // Draw players
             ctx.fillStyle = "blue";
-            ctx.fillRect(player.x, player.y, player.width, player.height);
+            ctx.fillRect(teigen.x, teigen.y, teigen.width, teigen.height);
 
-            // Draw obstacles (cars)
             ctx.fillStyle = "red";
-            obstacles.forEach(car => ctx.fillRect(car.x, car.y, car.width, car.height));
+            ctx.fillRect(rohan.x, rohan.y, rohan.width, rohan.height);
 
-            // Draw pedestrians
-            ctx.fillStyle = "brown";
-            pedestrians.forEach(person => ctx.fillRect(person.x, person.y, person.width, person.height));
+            // Draw ball
+            ctx.fillStyle = "white";
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function resetBall() {
+            ball.x = canvas.width / 2;
+            ball.y = canvas.height / 2;
+            ball.dx = Math.random() > 0.5 ? 3 : -3;
+            ball.dy = Math.random() > 0.5 ? 2 : -2;
+        }
+
+        function resetGame() {
+            score.teigen = 0;
+            score.rohan = 0;
+            resetBall();
         }
 
         function gameLoop() {
