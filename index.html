@@ -3,16 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Melina Snake Game</title>
+    <title>Obstacle Course Game</title>
     <style>
         body {
             text-align: center;
             font-family: Arial, sans-serif;
-            background-color: #f0e68c;
+            background-color: #222;
+            color: white;
         }
         canvas {
-            background: #aad751;
+            background: lightblue;
             border: 3px solid black;
+            display: block;
+            margin: auto;
         }
         #gameOver {
             display: none;
@@ -22,81 +25,111 @@
     </style>
 </head>
 <body>
-    <h1>Melina Snake Game 🐍💛</h1>
-    <p>Use arrow keys to move Melina!</p>
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <h1>Obstacle Course Game 🚀</h1>
+    <p>Use arrow keys to reach the green goal!</p>
+    <canvas id="gameCanvas" width="600" height="400"></canvas>
     <p id="gameOver">Game Over! Refresh to try again.</p>
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
 
-        const boxSize = 20;
-        let snake = [{ x: 200, y: 200 }];
-        let direction = "RIGHT";
-        let food = { x: randomPosition(), y: randomPosition() };
+        let player = { x: 50, y: 350, width: 20, height: 20, speed: 4 };
+        let goal = { x: 550, y: 50, width: 40, height: 40 };
+        let obstacles = [
+            { x: 200, y: 300, width: 100, height: 20, speed: 2, direction: 1 },
+            { x: 400, y: 200, width: 100, height: 20, speed: 3, direction: -1 }
+        ];
+        let spikes = [
+            { x: 300, y: 380, width: 40, height: 20 },
+            { x: 150, y: 250, width: 40, height: 20 }
+        ];
+        let keys = {};
+        let level = 1;
 
-        function randomPosition() {
-            return Math.floor(Math.random() * (canvas.width / boxSize)) * boxSize;
-        }
-
-        document.addEventListener("keydown", (e) => {
-            if (e.key === "ArrowUp" && direction !== "DOWN") direction = "UP";
-            if (e.key === "ArrowDown" && direction !== "UP") direction = "DOWN";
-            if (e.key === "ArrowLeft" && direction !== "RIGHT") direction = "LEFT";
-            if (e.key === "ArrowRight" && direction !== "LEFT") direction = "RIGHT";
-        });
+        // Key event listeners
+        document.addEventListener("keydown", (e) => keys[e.key] = true);
+        document.addEventListener("keyup", (e) => keys[e.key] = false);
 
         function update() {
-            let head = { ...snake[0] };
+            // Move player
+            if (keys["ArrowUp"] && player.y > 0) player.y -= player.speed;
+            if (keys["ArrowDown"] && player.y < canvas.height - player.height) player.y += player.speed;
+            if (keys["ArrowLeft"] && player.x > 0) player.x -= player.speed;
+            if (keys["ArrowRight"] && player.x < canvas.width - player.width) player.x += player.speed;
 
-            if (direction === "UP") head.y -= boxSize;
-            if (direction === "DOWN") head.y += boxSize;
-            if (direction === "LEFT") head.x -= boxSize;
-            if (direction === "RIGHT") head.x += boxSize;
+            // Move obstacles
+            obstacles.forEach(obstacle => {
+                obstacle.x += obstacle.speed * obstacle.direction;
+                if (obstacle.x <= 0 || obstacle.x + obstacle.width >= canvas.width) {
+                    obstacle.direction *= -1;
+                }
+            });
 
-            // Check collision with walls or itself
-            if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height ||
-                snake.some(segment => segment.x === head.x && segment.y === head.y)) {
-                document.getElementById("gameOver").style.display = "block";
-                return clearInterval(game);
-            }
+            // Check collision with obstacles
+            obstacles.forEach(obstacle => {
+                if (player.x < obstacle.x + obstacle.width && player.x + player.width > obstacle.x &&
+                    player.y < obstacle.y + obstacle.height && player.y + player.height > obstacle.y) {
+                    gameOver();
+                }
+            });
 
-            snake.unshift(head);
+            // Check collision with spikes
+            spikes.forEach(spike => {
+                if (player.x < spike.x + spike.width && player.x + player.width > spike.x &&
+                    player.y < spike.y + spike.height && player.y + player.height > spike.y) {
+                    gameOver();
+                }
+            });
 
-            // Eat food
-            if (head.x === food.x && head.y === food.y) {
-                food = { x: randomPosition(), y: randomPosition() };
-            } else {
-                snake.pop();
+            // Check if player reached the goal
+            if (player.x < goal.x + goal.width && player.x + player.width > goal.x &&
+                player.y < goal.y + goal.height && player.y + player.height > goal.y) {
+                nextLevel();
             }
         }
 
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Draw Melina (snake)
-            snake.forEach((segment, index) => {
-                ctx.fillStyle = index === 0 ? "yellow" : "gold";
-                ctx.fillRect(segment.x, segment.y, boxSize, boxSize);
+            // Draw player
+            ctx.fillStyle = "blue";
+            ctx.fillRect(player.x, player.y, player.width, player.height);
 
-                // Add Melina's bangs
-                if (index === 0) {
-                    ctx.fillStyle = "black";
-                    ctx.fillRect(segment.x, segment.y, boxSize, 5);
-                }
-            });
+            // Draw goal
+            ctx.fillStyle = "green";
+            ctx.fillRect(goal.x, goal.y, goal.width, goal.height);
 
-            // Draw food
+            // Draw obstacles
             ctx.fillStyle = "red";
-            ctx.fillRect(food.x, food.y, boxSize, boxSize);
+            obstacles.forEach(obstacle => ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height));
+
+            // Draw spikes
+            ctx.fillStyle = "brown";
+            spikes.forEach(spike => ctx.fillRect(spike.x, spike.y, spike.width, spike.height));
+        }
+
+        function gameOver() {
+            document.getElementById("gameOver").style.display = "block";
+            clearInterval(game);
+        }
+
+        function nextLevel() {
+            level++;
+            player.x = 50;
+            player.y = 350;
+            obstacles.push({ x: Math.random() * 400 + 100, y: Math.random() * 300 + 50, width: 100, height: 20, speed: Math.random() * 2 + 2, direction: 1 });
+            spikes.push({ x: Math.random() * 400 + 100, y: Math.random() * 300 + 50, width: 40, height: 20 });
+            alert(`Level ${level}! It gets harder!`);
         }
 
         function gameLoop() {
             update();
             draw();
+            requestAnimationFrame(gameLoop);
         }
 
-        let game = setInterval(gameLoop, 100);
+        let game = setInterval(gameLoop, 1000 / 60);
     </script>
 </body>
 </html>
+
