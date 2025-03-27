@@ -36,24 +36,48 @@
       width: 100%;
       height: 100%;
     }
+    #controls {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 10;
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    #controls input {
+      padding: 5px;
+      margin-right: 10px;
+    }
+    #controls button {
+      padding: 5px 10px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-  <div id="map">
-    <div class="person" id="person1" draggable="true" data-name="Alice" style="left: 100px; top: 150px;">Alice</div>
-    <div class="person" id="person2" draggable="true" data-name="Bob" style="left: 300px; top: 150px;">Bob</div>
-    <div class="person" id="person3" draggable="true" data-name="Charlie" style="left: 500px; top: 150px;">Charlie</div>
-    <div class="person" id="person4" draggable="true" data-name="David" style="left: 700px; top: 150px;">David</div>
+  <div id="controls">
+    <input type="text" id="nameInput" placeholder="Enter name" />
+    <button onclick="addPerson()">Add Person</button>
+    <button onclick="clearMap()">Clear Map</button>
+    <button onclick="matchPeople()">Match People</button>
+  </div>
 
+  <div id="map">
     <div class="canvas-container">
       <canvas id="connectionCanvas"></canvas>
     </div>
   </div>
 
   <script>
-    const people = document.querySelectorAll('.person');
+    const map = document.getElementById('map');
     const canvas = document.getElementById('connectionCanvas');
     const ctx = canvas.getContext('2d');
+    const nameInput = document.getElementById('nameInput');
+
+    const people = [];
+    const connections = [];
 
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -77,18 +101,12 @@
       };
     }
 
-    // Simulate connections between people (for example, Alice <-> Bob, Bob <-> Charlie)
-    const connections = [
-      { person1: 'Alice', person2: 'Bob' },
-      { person1: 'Bob', person2: 'Charlie' },
-      { person1: 'Charlie', person2: 'David' }
-    ];
-
     // Draw all connections
     function drawAllConnections() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       connections.forEach(conn => {
-        const person1 = document.getElementById(`person${getPersonIndex(conn.person1)}`);
-        const person2 = document.getElementById(`person${getPersonIndex(conn.person2)}`);
+        const person1 = document.getElementById(`person-${conn.person1}`);
+        const person2 = document.getElementById(`person-${conn.person2}`);
         
         const { x: x1, y: y1 } = getPersonCenter(person1);
         const { x: x2, y: y2 } = getPersonCenter(person2);
@@ -97,36 +115,79 @@
       });
     }
 
-    // Get the person index from their name
-    function getPersonIndex(name) {
-      switch (name) {
-        case 'Alice': return 1;
-        case 'Bob': return 2;
-        case 'Charlie': return 3;
-        case 'David': return 4;
-        default: return 1;
+    // Add a new person to the map
+    function addPerson() {
+      const name = nameInput.value.trim();
+      if (name) {
+        const personId = `person-${name}`;
+        const personDiv = document.createElement('div');
+        personDiv.classList.add('person');
+        personDiv.id = personId;
+        personDiv.textContent = name;
+        personDiv.setAttribute('draggable', 'true');
+        personDiv.style.left = `${Math.random() * (window.innerWidth - 50)}px`;
+        personDiv.style.top = `${Math.random() * (window.innerHeight - 50)}px`;
+
+        // Add the new person to the people array
+        people.push(name);
+
+        // Add event listeners for dragging
+        personDiv.addEventListener('dragstart', (e) => {
+          e.dataTransfer.setData('text', e.target.id);
+        });
+
+        personDiv.addEventListener('dragend', (e) => {
+          const draggedElement = document.getElementById(e.target.id);
+          draggedElement.style.left = `${e.pageX - draggedElement.offsetWidth / 2}px`;
+          draggedElement.style.top = `${e.pageY - draggedElement.offsetHeight / 2}px`;
+          
+          // Redraw connections after drag
+          drawAllConnections();
+        });
+
+        map.appendChild(personDiv);
+        nameInput.value = ''; // Clear the input
       }
     }
 
-    // Make the people draggable
-    people.forEach(person => {
-      person.addEventListener('dragstart', (e) => {
-        e.dataTransfer.setData('text', e.target.id);
+    // Clear the map
+    function clearMap() {
+      // Remove all people
+      people.forEach(name => {
+        const personDiv = document.getElementById(`person-${name}`);
+        if (personDiv) personDiv.remove();
       });
+      people.length = 0;
 
-      person.addEventListener('dragend', (e) => {
-        const draggedElement = document.getElementById(e.target.id);
-        draggedElement.style.left = `${e.pageX - draggedElement.offsetWidth / 2}px`;
-        draggedElement.style.top = `${e.pageY - draggedElement.offsetHeight / 2}px`;
+      // Clear the connections
+      connections.length = 0;
+      drawAllConnections();
+    }
 
-        // Redraw connections after drag
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Match people (create connections)
+    function matchPeople() {
+      // Example of matching people randomly for this demo
+      if (people.length >= 2) {
+        const person1 = people[Math.floor(Math.random() * people.length)];
+        let person2 = people[Math.floor(Math.random() * people.length)];
+        
+        // Ensure it's not the same person
+        while (person1 === person2) {
+          person2 = people[Math.floor(Math.random() * people.length)];
+        }
+        
+        // Store the connection
+        connections.push({ person1, person2 });
+
+        // Redraw connections
         drawAllConnections();
-      });
-    });
+      }
+    }
 
-    // Initial drawing of connections
+    // Initial call to draw all connections (it will be empty at the start)
     drawAllConnections();
+
   </script>
 </body>
 </html>
+
