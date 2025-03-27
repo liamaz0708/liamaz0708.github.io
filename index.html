@@ -3,224 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dating Connection Map 💕</title>
+    <title>Blooming Truck</title>
     <style>
         body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f8f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #c4d6a6;
+            padding: 20px;
             text-align: center;
-            font-family: Arial, sans-serif;
-            background-color: #f5e1f7;
         }
-        #mapContainer {
-            position: relative;
-            width: 90%;
-            height: 500px;
-            border: 2px solid black;
-            background-color: #fff;
-            margin: auto;
-            overflow: hidden;
+        h1 {
+            font-size: 2.5rem;
+            color: #4f772d;
         }
-        canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            pointer-events: none;
+        nav ul {
+            list-style: none;
+            padding: 0;
         }
-        .controls {
-            margin-bottom: 10px;
+        nav ul li {
+            display: inline;
+            margin: 0 20px;
+        }
+        nav a {
+            text-decoration: none;
+            color: #4f772d;
+            transition: color 0.3s;
+        }
+        nav a:hover {
+            color: #7b9a4e;
+        }
+        main {
+            padding: 20px;
+        }
+        section {
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .flower-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .flower-item {
+            background: #e3e3e3;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        footer {
+            text-align: center;
+            padding: 10px 0;
+            background-color: #c4d6a6;
         }
     </style>
 </head>
 <body>
-    <h1>Dating Connection Map 💕</h1>
-    <p>Create stick figure avatars and connect them!</p>
+    <header>
+        <h1>Blooming Truck</h1>
+        <nav>
+            <ul>
+                <li><a href="#location">Location</a></li>
+                <li><a href="#flowers">Flowers</a></li>
+                <li><a href="#orders">Order Flowers</a></li>
+                <li><a href="#feedback">Feedback</a></li>
+                <li><a href="#hours">Open Hours</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <section id="location">
+            <h2>Find Us</h2>
+            <p>Check out our live location:</p>
+            <div id="map" style="height: 300px; background-color: #eaeaea; text-align: center; line-height: 300px;">[Map Placeholder]</div> <!-- Placeholder for Google Maps -->
+        </section>
 
-    <div class="controls">
-        <input type="text" id="friendName" placeholder="Friend's Name">
-        <label>Hair Color:</label>
-        <input type="color" id="hairColor">
-        <label>Body Color:</label>
-        <input type="color" id="bodyColor">
-        <label>Height:</label>
-        <input type="range" id="height" min="30" max="80" value="50">
-        <button onclick="addFriend()">Add Friend</button>
-    </div>
+        <section id="flowers">
+            <h2>Available Flowers</h2>
+            <div class="flower-list">
+                <div class="flower-item">
+                    <h3>Sunflowers</h3>
+                    <p>Fresh and radiant, perfect for any occasion.</p>
+                </div>
+                <div class="flower-item">
+                    <h3>Roses</h3>
+                    <p>Classic and elegant, a timeless favorite.</p>
+                </div>
+                <div class="flower-item">
+                    <h3>Lilies</h3>
+                    <p>Fragrant and beautiful, a gentle touch.</p>
+                </div>
+            </div>
+        </section>
 
-    <br>
+        <section id="orders">
+            <h2>Order Your Flowers</h2>
+            <form id="order-form">
+                <label for="flower">Choose a flower:</label>
+                <select id="flower" name="flower">
+                    <option value="sunflower">Sunflower</option>
+                    <option value="rose">Rose</option>
+                    <option value="lily">Lily</option>
+                </select>
+                <label for="pickup-time">Select pickup time:</label>
+                <input type="datetime-local" id="pickup-time" name="pickup-time" required>
+                <button type="submit">Place Order</button>
+            </form>
+        </section>
 
-    <select id="friend1"></select>
-    <select id="friend2"></select>
-    <label>Connection:</label>
-    <select id="connectionType">
-        <option value="dated">They Dated ❤️</option>
-        <option value="talked">They Just Talked 💬</option>
-    </select>
-    <button onclick="connectFriends()">Connect</button>
+        <section id="feedback">
+            <h2>Your Feedback</h2>
+            <form id="feedback-form">
+                <textarea placeholder="Share your thoughts..." required></textarea>
+                <button type="submit">Submit Feedback</button>
+            </form>
+        </section>
 
-    <div id="mapContainer">
-        <canvas id="connectionCanvas"></canvas>
-    </div>
+        <section id="hours">
+            <h2>Open Hours</h2>
+            <p>Monday - Friday: 9 AM - 5 PM</p>
+            <p>Saturday - Sunday: 10 AM - 4 PM</p>
+        </section>
+    </main>
+    
+    <footer>
+        <p>&copy; 2023 Blooming Truck. All rights reserved.</p>
+    </footer>
 
     <script>
-        const mapContainer = document.getElementById("mapContainer");
-        const canvas = document.getElementById("connectionCanvas");
-        const ctx = canvas.getContext("2d");
-        canvas.width = mapContainer.clientWidth;
-        canvas.height = mapContainer.clientHeight;
-
-        let friends = [];
-        let connections = [];
-
-        function addFriend() {
-            const name = document.getElementById("friendName").value.trim();
-            const hairColor = document.getElementById("hairColor").value;
-            const bodyColor = document.getElementById("bodyColor").value;
-            const height = document.getElementById("height").value;
-
-            if (!name) return alert("Enter a valid name!");
-
-            const friend = {
-                name,
-                x: Math.random() * (mapContainer.clientWidth - 60),
-                y: Math.random() * (mapContainer.clientHeight - 80),
-                hairColor,
-                bodyColor,
-                height: parseInt(height),
-                isDragging: false
-            };
-
-            friends.push(friend);
-            updateFriendSelects();
-            drawScene();
-        }
-
-        function updateFriendSelects() {
-            const friend1 = document.getElementById("friend1");
-            const friend2 = document.getElementById("friend2");
-            friend1.innerHTML = "";
-            friend2.innerHTML = "";
-
-            friends.forEach(friend => {
-                const option1 = new Option(friend.name, friend.name);
-                const option2 = new Option(friend.name, friend.name);
-                friend1.add(option1);
-                friend2.add(option2);
-            });
-        }
-
-        function connectFriends() {
-            const name1 = document.getElementById("friend1").value;
-            const name2 = document.getElementById("friend2").value;
-            const connectionType = document.getElementById("connectionType").value;
-
-            if (name1 === name2) return alert("A person cannot date themselves!");
-
-            const friend1 = friends.find(f => f.name === name1);
-            const friend2 = friends.find(f => f.name === name2);
-
-            if (connections.some(c => (c.a === friend1 && c.b === friend2) || (c.a === friend2 && c.b === friend1))) {
-                return alert("These friends are already connected!");
-            }
-
-            connections.push({ a: friend1, b: friend2, type: connectionType });
-            drawScene();
-        }
-
-        function drawScene() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Draw connections
-            connections.forEach(({ a, b, type }) => {
-                ctx.strokeStyle = type === "dated" ? "red" : "blue";
-                ctx.lineWidth = type === "dated" ? 4 : 2;
-                ctx.beginPath();
-                ctx.moveTo(a.x + 30, a.y + 40);
-                ctx.lineTo(b.x + 30, b.y + 40);
-                ctx.stroke();
+        document.addEventListener("DOMContentLoaded", () => {
+            const orderForm = document.getElementById("order-form");
+            orderForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+                // You would typically send an AJAX request here to handle order placement
+                alert("Your order has been placed!");
             });
 
-            // Draw friends
-            friends.forEach(friend => drawStickFigure(friend));
-        }
-
-        function drawStickFigure(friend) {
-            ctx.fillStyle = friend.bodyColor;
-            ctx.strokeStyle = "black";
-            ctx.lineWidth = 2;
-
-            let headSize = 20;
-            let bodyHeight = friend.height;
-
-            // Draw name above figure
-            ctx.fillStyle = "black";
-            ctx.font = "12px Arial";
-            ctx.fillText(friend.name, friend.x + 15, friend.y - 5);
-
-            // Draw head
-            ctx.fillStyle = "white";
-            ctx.beginPath();
-            ctx.arc(friend.x + 30, friend.y + 20, headSize / 2, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-
-            // Draw hair
-            ctx.fillStyle = friend.hairColor;
-            ctx.fillRect(friend.x + 20, friend.y + 10, 20, 10);
-
-            // Draw body
-            ctx.strokeStyle = friend.bodyColor;
-            ctx.beginPath();
-            ctx.moveTo(friend.x + 30, friend.y + 20);
-            ctx.lineTo(friend.x + 30, friend.y + 20 + bodyHeight);
-            ctx.stroke();
-
-            // Draw arms
-            ctx.beginPath();
-            ctx.moveTo(friend.x + 10, friend.y + 30);
-            ctx.lineTo(friend.x + 50, friend.y + 30);
-            ctx.stroke();
-
-            // Draw legs
-            ctx.beginPath();
-            ctx.moveTo(friend.x + 30, friend.y + 20 + bodyHeight);
-            ctx.lineTo(friend.x + 15, friend.y + 20 + bodyHeight + 20);
-            ctx.stroke();
-
-            ctx.beginPath();
-            ctx.moveTo(friend.x + 30, friend.y + 20 + bodyHeight);
-            ctx.lineTo(friend.x + 45, friend.y + 20 + bodyHeight + 20);
-            ctx.stroke();
-        }
-
-        let draggingFriend = null;
-        let offsetX, offsetY;
-
-        canvas.addEventListener("mousedown", (e) => {
-            const mouseX = e.offsetX;
-            const mouseY = e.offsetY;
-
-            friends.forEach(friend => {
-                let headSize = 20;
-                if (mouseX > friend.x + 20 && mouseX < friend.x + 40 && mouseY > friend.y && mouseY < friend.y + headSize) {
-                    draggingFriend = friend;
-                    offsetX = mouseX - friend.x;
-                    offsetY = mouseY - friend.y;
-                }
+            const feedbackForm = document.getElementById("feedback-form");
+            feedbackForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+                alert("Thank you for your feedback!");
             });
-        });
 
-        canvas.addEventListener("mousemove", (e) => {
-            if (draggingFriend) {
-                draggingFriend.x = e.offsetX - offsetX;
-                draggingFriend.y = e.offsetY - offsetY;
-                drawScene();
-            }
+            // Placeholder: Load Google Maps (ensure you have a valid key).
+            // You can also add live location update functionalities here.
         });
-
-        canvas.addEventListener("mouseup", () => {
-            draggingFriend = null;
-        });
-
-        drawScene();
     </script>
 </body>
 </html>
