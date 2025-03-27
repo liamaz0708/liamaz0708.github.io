@@ -1,16 +1,132 @@
-const data = {
-    nodes: [
-        { id: "Alice" },
-        { id: "Bob" },
-        { id: "Charlie" },
-        { id: "Daisy" },
-        { id: "Eve" }
-    ],
-    links: [
-        { source: "Alice", target: "Bob", type: "Dated" },
-        { source: "Bob", target: "Charlie", type: "Talked" },
-        { source: "Alice", target: "Daisy", type: "Talked" },
-        { source: "Daisy", target: "Eve", type: "Dated" }
-    ]
-};
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dating Map</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    #map {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+    }
+    .person {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      background-color: #3498db;
+      color: white;
+      text-align: center;
+      line-height: 50px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    .canvas-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="map">
+    <div class="person" id="person1" draggable="true" data-name="Alice" style="left: 100px; top: 150px;">Alice</div>
+    <div class="person" id="person2" draggable="true" data-name="Bob" style="left: 300px; top: 150px;">Bob</div>
+    <div class="person" id="person3" draggable="true" data-name="Charlie" style="left: 500px; top: 150px;">Charlie</div>
+    <div class="person" id="person4" draggable="true" data-name="David" style="left: 700px; top: 150px;">David</div>
 
+    <div class="canvas-container">
+      <canvas id="connectionCanvas"></canvas>
+    </div>
+  </div>
+
+  <script>
+    const people = document.querySelectorAll('.person');
+    const canvas = document.getElementById('connectionCanvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Function to draw lines connecting people
+    function drawConnection(x1, y1, x2, y2) {
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.strokeStyle = 'green';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    // Function to find the center position of a person
+    function getPersonCenter(person) {
+      const rect = person.getBoundingClientRect();
+      return {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2
+      };
+    }
+
+    // Simulate connections between people (for example, Alice <-> Bob, Bob <-> Charlie)
+    const connections = [
+      { person1: 'Alice', person2: 'Bob' },
+      { person1: 'Bob', person2: 'Charlie' },
+      { person1: 'Charlie', person2: 'David' }
+    ];
+
+    // Draw all connections
+    function drawAllConnections() {
+      connections.forEach(conn => {
+        const person1 = document.getElementById(`person${getPersonIndex(conn.person1)}`);
+        const person2 = document.getElementById(`person${getPersonIndex(conn.person2)}`);
+        
+        const { x: x1, y: y1 } = getPersonCenter(person1);
+        const { x: x2, y: y2 } = getPersonCenter(person2);
+        
+        drawConnection(x1, y1, x2, y2);
+      });
+    }
+
+    // Get the person index from their name
+    function getPersonIndex(name) {
+      switch (name) {
+        case 'Alice': return 1;
+        case 'Bob': return 2;
+        case 'Charlie': return 3;
+        case 'David': return 4;
+        default: return 1;
+      }
+    }
+
+    // Make the people draggable
+    people.forEach(person => {
+      person.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text', e.target.id);
+      });
+
+      person.addEventListener('dragend', (e) => {
+        const draggedElement = document.getElementById(e.target.id);
+        draggedElement.style.left = `${e.pageX - draggedElement.offsetWidth / 2}px`;
+        draggedElement.style.top = `${e.pageY - draggedElement.offsetHeight / 2}px`;
+
+        // Redraw connections after drag
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawAllConnections();
+      });
+    });
+
+    // Initial drawing of connections
+    drawAllConnections();
+  </script>
+</body>
+</html>
