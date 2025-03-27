@@ -63,6 +63,10 @@
             padding: 10px 0;
             background-color: #c4d6a6;
         }
+        .admin-section {
+            display: none; /* Hidden by default */
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -75,6 +79,7 @@
                 <li><a href="#orders">Order Flowers</a></li>
                 <li><a href="#feedback">Feedback</a></li>
                 <li><a href="#hours">Open Hours</a></li>
+                <li><a href="#admin" id="admin-link">Admin</a></li>
             </ul>
         </nav>
     </header>
@@ -88,7 +93,7 @@
 
         <section id="flowers">
             <h2>Available Flowers</h2>
-            <div class="flower-list">
+            <div class="flower-list" id="flower-list">
                 <div class="flower-item">
                     <h3>Sunflowers</h3>
                     <p>Fresh and radiant, perfect for any occasion.</p>
@@ -132,29 +137,123 @@
             <p>Monday - Friday: 9 AM - 5 PM</p>
             <p>Saturday - Sunday: 10 AM - 4 PM</p>
         </section>
+
+        <section id="admin" class="admin-section">
+            <h2>Admin Section</h2>
+            <label for="admin-password">Enter Password:</label>
+            <input type="password" id="admin-password">
+            <button id="admin-login">Login</button>
+
+            <div id="admin-tools" style="display: none;">
+                <h3>Edit Flower Inventory</h3>
+                <input type="text" id="new-flower" placeholder="New Flower Name">
+                <input type="text" id="new-flower-description" placeholder="Flower Description">
+                <button id="add-flower">Add Flower</button>
+
+                <h3>Location</h3>
+                <input type="text" id="new-location" placeholder="Enter new location">
+                <button id="update-location">Update Location</button>
+
+                <h3>Feedbacks</h3>
+                <div id="feedback-list" style="margin: 10px 0;">
+                    <!-- Feedbacks will be listed here -->
+                </div>
+
+                <h3>Orders</h3>
+                <div id="order-list"> 
+                    <!-- Orders will be displayed here -->
+                </div>
+            </div>
+        </section>
     </main>
-    
+
     <footer>
         <p>&copy; 2023 Blooming Truck. All rights reserved.</p>
     </footer>
 
     <script>
+        const flowers = [
+            { name: "Sunflowers", description: "Fresh and radiant, perfect for any occasion." },
+            { name: "Roses", description: "Classic and elegant, a timeless favorite." },
+            { name: "Lilies", description: "Fragrant and beautiful, a gentle touch." }
+        ];
+
+        // Function to update flower display
+        function updateFlowerDisplay() {
+            const flowerList = document.getElementById("flower-list");
+            flowerList.innerHTML = ''; // Clear the previous flowers
+            flowers.forEach(flower => {
+                const div = document.createElement("div");
+                div.className = "flower-item";
+                div.innerHTML = `<h3>${flower.name}</h3><p>${flower.description}</p>`;
+                flowerList.appendChild(div);
+            });
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
+            updateFlowerDisplay();
+
             const orderForm = document.getElementById("order-form");
             orderForm.addEventListener("submit", function (event) {
                 event.preventDefault();
-                // You would typically send an AJAX request here to handle order placement
                 alert("Your order has been placed!");
+                // Here you'd normally send the order to the server
             });
 
             const feedbackForm = document.getElementById("feedback-form");
             feedbackForm.addEventListener("submit", function (event) {
                 event.preventDefault();
+                const feedbackText = feedbackForm.querySelector("textarea").value;
+                const feedbackList = document.getElementById("feedback-list");
+                const feedbackDiv = document.createElement("div");
+                feedbackDiv.textContent = feedbackText;
+                feedbackList.appendChild(feedbackDiv);
                 alert("Thank you for your feedback!");
+                feedbackForm.reset();
             });
 
-            // Placeholder: Load Google Maps (ensure you have a valid key).
-            // You can also add live location update functionalities here.
+            const adminLink = document.getElementById("admin-link");
+            const adminTools = document.getElementById("admin-tools");
+            const adminPasswordInput = document.getElementById("admin-password");
+            const adminLoginButton = document.getElementById("admin-login");
+
+            adminLink.addEventListener("click", function () {
+                const isVisible = adminTools.style.display === 'block';
+                adminTools.style.display = isVisible ? 'none' : 'block';
+            });
+
+            adminLoginButton.addEventListener("click", function () {
+                if (adminPasswordInput.value === "baker") {
+                    adminTools.style.display = "block";
+                } else {
+                    alert("Incorrect password. Access denied.");
+                }
+            });
+
+            const addFlowerButton = document.getElementById("add-flower");
+            addFlowerButton.addEventListener("click", function () {
+                const newFlowerName = document.getElementById("new-flower").value;
+                const newFlowerDescription = document.getElementById("new-flower-description").value;
+                
+                if (newFlowerName && newFlowerDescription) {
+                    flowers.push({ name: newFlowerName, description: newFlowerDescription });
+                    updateFlowerDisplay();
+                    alert("Flower added!");
+                } else {
+                    alert("Please enter valid flower details.");
+                }
+            });
+
+            const updateLocationButton = document.getElementById("update-location");
+            updateLocationButton.addEventListener("click", function () {
+                const newLocation = document.getElementById("new-location").value;
+                if (newLocation) {
+                    // Update location logic could go here
+                    alert(`Location updated to: ${newLocation}`);
+                } else {
+                    alert("Please enter a valid location.");
+                }
+            });
         });
     </script>
 </body>
