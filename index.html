@@ -22,12 +22,19 @@
       position: absolute;
       width: 50px;
       height: 50px;
-      background-color: #3498db;
       color: white;
       text-align: center;
       line-height: 50px;
       border-radius: 50%;
-      cursor: pointer;
+      cursor: move;
+      user-select: none;
+      transition: all 0.2s ease;
+    }
+    .boy {
+      background-color: #3498db; /* Blue for boy */
+    }
+    .girl {
+      background-color: #e74c3c; /* Red for girl */
     }
     .canvas-container {
       position: absolute;
@@ -55,6 +62,10 @@
 <body>
   <div id="controls">
     <input type="text" id="nameInput" placeholder="Enter name" />
+    <select id="genderSelect">
+      <option value="boy">Boy</option>
+      <option value="girl">Girl</option>
+    </select>
     <button onclick="addPerson()">Add Person</button>
     <button onclick="clearMap()">Clear Map</button>
 
@@ -67,8 +78,11 @@
 
     <label for="connectionTypeSelect">Connection Type:</label>
     <select id="connectionTypeSelect">
-      <option value="talked">Just Talked</option>
+      <option value="talked">Talked</option>
       <option value="dated">Dated</option>
+      <option value="dance">Went to a Dance Together</option>
+      <option value="flirted">Flirted</option>
+      <option value="kissed">Kissed</option>
     </select>
 
     <button onclick="matchPeople()">Match People</button>
@@ -85,6 +99,7 @@
     const canvas = document.getElementById('connectionCanvas');
     const ctx = canvas.getContext('2d');
     const nameInput = document.getElementById('nameInput');
+    const genderSelect = document.getElementById('genderSelect');
     const person1Select = document.getElementById('person1Select');
     const person2Select = document.getElementById('person2Select');
     const connectionTypeSelect = document.getElementById('connectionTypeSelect');
@@ -107,6 +122,15 @@
         ctx.strokeStyle = 'blue';
         ctx.lineWidth = 2;
         ctx.setLineDash([5, 3]); // Dashed line for "talked"
+      } else if (connectionType === 'dance') {
+        ctx.strokeStyle = 'purple';
+        ctx.lineWidth = 2;
+      } else if (connectionType === 'flirted') {
+        ctx.strokeStyle = 'orange';
+        ctx.lineWidth = 2;
+      } else if (connectionType === 'kissed') {
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 3;
       }
       ctx.stroke();
       ctx.setLineDash([]); // Reset line dash
@@ -138,10 +162,13 @@
     // Add a new person to the map
     function addPerson() {
       const name = nameInput.value.trim();
+      const gender = genderSelect.value;
+
       if (name) {
         const personId = `person-${name}`;
         const personDiv = document.createElement('div');
         personDiv.classList.add('person');
+        personDiv.classList.add(gender);
         personDiv.id = personId;
         personDiv.textContent = name;
         personDiv.setAttribute('draggable', 'true');
