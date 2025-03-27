@@ -46,13 +46,9 @@
       border-radius: 5px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
-    #controls input {
+    #controls input, #controls select, #controls button {
       padding: 5px;
       margin-right: 10px;
-    }
-    #controls button {
-      padding: 5px 10px;
-      cursor: pointer;
     }
   </style>
 </head>
@@ -61,6 +57,20 @@
     <input type="text" id="nameInput" placeholder="Enter name" />
     <button onclick="addPerson()">Add Person</button>
     <button onclick="clearMap()">Clear Map</button>
+
+    <br />
+    <label for="person1Select">Person 1:</label>
+    <select id="person1Select"></select>
+
+    <label for="person2Select">Person 2:</label>
+    <select id="person2Select"></select>
+
+    <label for="connectionTypeSelect">Connection Type:</label>
+    <select id="connectionTypeSelect">
+      <option value="talked">Just Talked</option>
+      <option value="dated">Dated</option>
+    </select>
+
     <button onclick="matchPeople()">Match People</button>
   </div>
 
@@ -75,6 +85,9 @@
     const canvas = document.getElementById('connectionCanvas');
     const ctx = canvas.getContext('2d');
     const nameInput = document.getElementById('nameInput');
+    const person1Select = document.getElementById('person1Select');
+    const person2Select = document.getElementById('person2Select');
+    const connectionTypeSelect = document.getElementById('connectionTypeSelect');
 
     const people = [];
     const connections = [];
@@ -82,14 +95,21 @@
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    // Function to draw lines connecting people
-    function drawConnection(x1, y1, x2, y2) {
+    // Function to draw lines connecting people with different styles
+    function drawConnection(x1, y1, x2, y2, connectionType) {
       ctx.beginPath();
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
-      ctx.strokeStyle = 'green';
-      ctx.lineWidth = 2;
+      if (connectionType === 'dated') {
+        ctx.strokeStyle = 'green';
+        ctx.lineWidth = 2;
+      } else if (connectionType === 'talked') {
+        ctx.strokeStyle = 'blue';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 3]); // Dashed line for "talked"
+      }
       ctx.stroke();
+      ctx.setLineDash([]); // Reset line dash
     }
 
     // Function to find the center position of a person
@@ -111,7 +131,7 @@
         const { x: x1, y: y1 } = getPersonCenter(person1);
         const { x: x2, y: y2 } = getPersonCenter(person2);
         
-        drawConnection(x1, y1, x2, y2);
+        drawConnection(x1, y1, x2, y2, conn.connectionType);
       });
     }
 
@@ -130,6 +150,7 @@
 
         // Add the new person to the people array
         people.push(name);
+        updatePeopleSelectOptions();
 
         // Add event listeners for dragging
         personDiv.addEventListener('dragstart', (e) => {
@@ -150,6 +171,40 @@
       }
     }
 
+    // Update the people select dropdowns
+    function updatePeopleSelectOptions() {
+      person1Select.innerHTML = '';
+      person2Select.innerHTML = '';
+      people.forEach(person => {
+        const option1 = document.createElement('option');
+        option1.value = person;
+        option1.textContent = person;
+        person1Select.appendChild(option1);
+
+        const option2 = document.createElement('option');
+        option2.value = person;
+        option2.textContent = person;
+        person2Select.appendChild(option2);
+      });
+    }
+
+    // Match selected people
+    function matchPeople() {
+      const person1 = person1Select.value;
+      const person2 = person2Select.value;
+      const connectionType = connectionTypeSelect.value;
+
+      if (person1 && person2 && person1 !== person2) {
+        // Store the connection
+        connections.push({ person1, person2, connectionType });
+
+        // Redraw connections
+        drawAllConnections();
+      } else {
+        alert('Please select two different people to match.');
+      }
+    }
+
     // Clear the map
     function clearMap() {
       // Remove all people
@@ -158,36 +213,16 @@
         if (personDiv) personDiv.remove();
       });
       people.length = 0;
-
-      // Clear the connections
       connections.length = 0;
+
+      // Redraw connections
       drawAllConnections();
+      updatePeopleSelectOptions();
     }
 
-    // Match people (create connections)
-    function matchPeople() {
-      // Example of matching people randomly for this demo
-      if (people.length >= 2) {
-        const person1 = people[Math.floor(Math.random() * people.length)];
-        let person2 = people[Math.floor(Math.random() * people.length)];
-        
-        // Ensure it's not the same person
-        while (person1 === person2) {
-          person2 = people[Math.floor(Math.random() * people.length)];
-        }
-        
-        // Store the connection
-        connections.push({ person1, person2 });
-
-        // Redraw connections
-        drawAllConnections();
-      }
-    }
-
-    // Initial call to draw all connections (it will be empty at the start)
-    drawAllConnections();
+    // Initial call to update select options
+    updatePeopleSelectOptions();
 
   </script>
 </body>
 </html>
-
